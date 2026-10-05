@@ -1,5 +1,5 @@
 // Imports seed/searches.mjs into a live deployment. Searches and sources
-// already there are left alone (your edits in the app or Airtable win)
+// already there are left alone (your edits in the app win)
 // unless you pass --force, which overwrites them with the seed's version.
 // Listings are never touched.
 //   SHORTLIST_URL=https://finds.vercel.app ADMIN_TOKEN=… npm run seed

@@ -1,6 +1,6 @@
 // The starting board: one search per item, each with its own rubric, plus
 // its sources. Budgets, sizes and the home base are placeholders marked
-// [confirm]; edit them in the app (Criteria) or in Airtable after seeding.
+// [confirm]; edit them in the app (Criteria) after seeding.
 // `npm run seed` imports what isn't there yet; listings are never touched.
 //
 // Where you are lives in PLACE, so the same items work in another city:

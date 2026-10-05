@@ -35,12 +35,8 @@ then `npm run engine -- main` here.
    defaults (vercel.json sets the build and output).
 2. Storage: create a **Neon** database and a **Blob** store and connect both.
 3. Environment variables: `ADMIN_TOKEN` (16+ random chars), `CRON_SECRET`
-   (16+), `ANTHROPIC_API_KEY`, `DAILY_CRAWL=1`. Airtable: the base is
-   "NYC Furniture Shortlist" (`AIRTABLE_BASE_ID=app2T4xarhLTc3Xq6`; rename it
-   to Finds in Airtable, the ID stays), plus an
-   `AIRTABLE_TOKEN` with `data.records:read/write`, `schema.bases:read` and
-   `webhook:manage` on that base. Redeploy, then run the first sync:
-   `curl -X POST -H "Authorization: Bearer $ADMIN_TOKEN" https://<app>/api/sync`.
+   (16+), `ANTHROPIC_API_KEY`, `DAILY_CRAWL=1`. Redeploy. No Airtable for
+   now: leave the `AIRTABLE_*` variables unset and the sync stays off.
 4. Seed: `SHORTLIST_URL=https://<app>.vercel.app ADMIN_TOKEN=… npm run seed`
 5. First crawl: Sources → Run crawl on each search (after that, daily).
 
