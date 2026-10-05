@@ -24,6 +24,9 @@
     },
     "api/searches/[id].js": {
       "maxDuration": 60
+    },
+    "api/admin/rescore.js": {
+      "maxDuration": 300
     }
   },
   "headers": [
