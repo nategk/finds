@@ -7,7 +7,7 @@
 // change it (or add a city) and re-seed.
 export const PLACE = {
   city: "New York",
-  home: "88 Franklin St, New York, NY 10013",              // AIRE, Tribeca; change it in the app (Criteria)
+  home: "200 W 67th St, New York, NY 10023",               // Aire (Lincoln Square); change it in the app (Criteria)
   nearby: "Brooklyn / Queens / Upper Manhattan",          // fine for the right piece
   far: "NJ, Westchester, Long Island",                     // only for a 9+
   craigslist: "newyork",                                   // <area>.craigslist.org
