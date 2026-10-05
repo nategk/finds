@@ -23,8 +23,14 @@ console.log(`${send.searches.length} searches and ${send.sources.length} sources
 if (dry) { console.log(JSON.stringify(send, null, 2)); process.exit(0); }
 if (!send.searches.length && !send.sources.length) process.exit(0);
 
-const res = await fetch(base + "/api/admin/import?keepTriage=1", {
-  method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" }, body: JSON.stringify(send),
-});
-console.log(res.status, await res.text());
-if (!res.ok) process.exit(1);
+// One search per request, in order, so the board's tabs keep the seed's
+// priority order (searches are listed by when they were created).
+const post = async body => {
+  const res = await fetch(base + "/api/admin/import?keepTriage=1", {
+    method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" }, body: JSON.stringify(body),
+  });
+  const text = await res.text();
+  if (!res.ok) { console.error(res.status, text); process.exit(1); }
+};
+for (const s of send.searches) { await post({ searches: [s] }); console.log("search", s.id); }
+if (send.sources.length) { await post({ sources: send.sources }); console.log(send.sources.length, "sources"); }
