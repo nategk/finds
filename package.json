@@ -1,0 +1,22 @@
+{
+  "name": "finds",
+  "private": true,
+  "type": "module",
+  "description": "Finds: a Shortlist layer for buying high-quality second-hand things.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && node scripts/dev.mjs",
+    "engine": "node scripts/update-engine.mjs",
+    "seed": "node scripts/seed.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@vercel/blob": "^2.8.0",
+    "pg": "^8.23.0",
+    "zod": "^4.6.5"
+  }
+}

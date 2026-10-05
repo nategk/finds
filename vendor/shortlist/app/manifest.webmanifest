@@ -1,0 +1,9 @@
+{
+  "name": "Shortlist",
+  "short_name": "Shortlist",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#171717"
+}

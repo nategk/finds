@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shortlist</title>
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">Shortlist</span>
+    <div class="db-group" role="group" aria-label="Database">
+      <button class="source-pill" id="source-pill" type="button" aria-label="Data source settings">
+        <i class="dot" id="source-dot"></i><span id="source-name">Loading…</span><span class="kind" id="source-kind"></span>
+      </button>
+      <button class="db-btn" type="button" id="open-criteria" data-sheet="criteria" hidden>Criteria</button>
+      <button class="db-btn" type="button" id="open-contact" data-sheet="contact" hidden>Contact</button>
+      <button class="db-btn" type="button" id="open-sources" data-sheet="sources" hidden>Sources</button>
+    </div>
+  </div>
+
+  <header class="search">
+    <h1 id="title-wrap"></h1>
+    <div class="sync-line" id="sync" role="status"></div>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Filter listings"></nav>
+  <main class="grid" id="grid"></main>
+
+</div>
+
+<dialog id="sheet" class="sheet" aria-labelledby="sheet-title">
+  <div class="sheet-head">
+    <h2 class="visually-hidden" id="sheet-title">Search setup</h2>
+    <nav class="tabs" aria-label="Search setup">
+      <button class="sheet-tab" type="button" data-sheet="criteria" aria-pressed="true">Criteria</button>
+      <button class="sheet-tab" type="button" data-sheet="contact" aria-pressed="false">Contact</button>
+      <button class="sheet-tab" type="button" data-sheet="sources" aria-pressed="false">Sources</button>
+    </nav>
+    <form method="dialog"><button class="btn icon" value="close" aria-label="Close">✕</button></form>
+  </div>
+
+  <section class="sheet-body" id="sheet-criteria">
+    <textarea id="criteria" class="doc" spellcheck="true" aria-label="Criteria"></textarea>
+    <label class="sub" for="features">Bonus features <span class="hint">one per line, <code>Label | points</code>; added to the fit score and shown as chips on cards</span></label>
+    <textarea id="features" class="doc short" spellcheck="true" placeholder="Gym | +3"></textarea>
+    <div class="actions"><button class="btn primary" type="button" id="save-criteria" disabled>Save criteria</button><span class="hint" id="criteria-hint"></span></div>
+  </section>
+
+  <section class="sheet-body" id="sheet-contact" hidden>
+    <p class="hint">Your first message to a seller or agent. Fill in the brackets, then Copy.</p>
+    <textarea id="contact" class="doc" spellcheck="true" aria-label="Contact template"></textarea>
+    <div class="actions"><button class="btn primary" type="button" id="save-contact" disabled>Save template</button>
+      <button class="btn" type="button" id="copy-contact">Copy</button><span class="hint" id="contact-hint"></span></div>
+  </section>
+
+  <section class="sheet-body" id="sheet-sources" hidden>
+    <div class="actions"><button class="btn primary" type="button" id="run-crawl" hidden>Run crawl</button><span class="hint" id="crawl-hint"></span></div>
+    <ul class="rows" id="sources"></ul>
+  </section>
+</dialog>
+
+<dialog id="settings">
+  <form method="dialog" id="settings-form">
+    <h2>Data source</h2>
+    <label>Type
+      <select id="set-adapter"></select>
+    </label>
+    <div id="set-fields" style="display:grid;gap:12px"></div>
+    <p class="hint" id="set-hint"></p>
+    <div class="row">
+      <button class="btn" type="button" id="set-clear">Clear offline copy</button>
+      <span style="display:flex;gap:8px">
+        <button class="btn" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" value="save" id="set-save">Connect</button>
+      </span>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="lightbox" class="lightbox" aria-label="Photos">
+  <div class="lb-slides" id="lb-slides"></div>
+  <button class="lb-btn lb-close" type="button" id="lb-close" aria-label="Close photos"></button>
+  <button class="lb-btn lb-nav lb-prev" type="button" data-lb="-1" aria-label="Previous photo"></button>
+  <button class="lb-btn lb-nav lb-next" type="button" data-lb="1" aria-label="Next photo"></button>
+  <span class="lb-count" id="lb-count"></span>
+</dialog>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

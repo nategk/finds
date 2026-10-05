@@ -1,0 +1,312 @@
+/* Geist, as-is (vercel.com/geist): its colour scales, type styles, materials and
+   component specs (Button, Badge, Switch, Input, Status Dot). Custom rules are kept
+   to what Geist has no component for and are marked "not in Geist". 
+   Scale steps: 100-300 fills, 400-600 borders, 700-800 solid fills, 900-1000 text. */
+:root {
+  color-scheme: light;
+  --background-100: #ffffff; --background-200: #fafafa; --gray-100: #f2f2f2; --gray-200: #ebebeb; --gray-300: #e6e6e6;
+  --gray-400: #ebebeb; --gray-500: #c9c9c9; --gray-600: #a8a8a8; --gray-700: #8f8f8f; --gray-800: #7d7d7d;
+  --gray-900: #4c4c4c; --gray-1000: #171717; --gray-alpha-100: #0000000d; --gray-alpha-200: #00000015; --gray-alpha-300: #0000001a;
+  --gray-alpha-400: #00000014; --gray-alpha-500: #00000036; --gray-alpha-600: #0000003d; --gray-alpha-700: #00000070; --gray-alpha-800: #00000082;
+  --gray-alpha-900: #000000b3; --gray-alpha-1000: #000000e8; --blue-100: #f0f7ff; --blue-200: #ebf5ff; --blue-300: #e0f0ff;
+  --blue-400: #cce6ff; --blue-500: #99ceff; --blue-600: #52aeff; --blue-700: #0072f5; --blue-800: #0062d1;
+  --blue-900: #0068d6; --blue-1000: #00254c; --red-100: #fff0f0; --red-200: #ffebeb; --red-300: #ffe5e5;
+  --red-400: #fdd8d8; --red-500: #f8b9b9; --red-600: #f87275; --red-700: #e5484d; --red-800: #da2f35;
+  --red-900: #cb2a2f; --red-1000: #391417; --amber-100: #fff6e5; --amber-200: #fff4d6; --amber-300: #fef0cd;
+  --amber-400: #ffdd8f; --amber-500: #ffc96b; --amber-600: #f5b047; --amber-700: #ffb224; --amber-800: #ff990a;
+  --amber-900: #a35200; --amber-1000: #4e2009; --green-100: #effbef; --green-200: #ebfaeb; --green-300: #daf6da;
+  --green-400: #c6f1c7; --green-500: #99e69e; --green-600: #6cda75; --green-700: #45a557; --green-800: #398e4a;
+  --green-900: #297a3a; --green-1000: #1b311e;
+  --shadow-border: 0 0 0 1px #00000014;
+  --shadow-small: 0 0 0 1px #00000014, 0px 2px 2px #0000000a;
+  --shadow-medium: 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0px 8px 8px -8px #0000000a;
+  --shadow-modal: 0 0 0 1px #00000014, 0px 1px 1px #00000005, 0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f, 0 0 0 1px #fafafa;
+  --focus: var(--blue-700);
+  --focus-border: 0 0 0 1px var(--gray-alpha-600), 0 0 0 4px #00000029;
+  --primary-hover: #383838;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background-100: #0a0a0a; --background-200: #000000; --gray-100: #1a1a1a; --gray-200: #1f1f1f; --gray-300: #292929;
+    --gray-400: #2e2e2e; --gray-500: #454545; --gray-600: #878787; --gray-700: #8f8f8f; --gray-800: #7d7d7d;
+    --gray-900: #a0a0a0; --gray-1000: #ededed; --gray-alpha-100: #ffffff12; --gray-alpha-200: #ffffff17; --gray-alpha-300: #ffffff21;
+    --gray-alpha-400: #ffffff24; --gray-alpha-500: #ffffff3d; --gray-alpha-600: #ffffff82; --gray-alpha-700: #ffffff8a; --gray-alpha-800: #ffffff78;
+    --gray-alpha-900: #ffffff9c; --gray-alpha-1000: #ffffffeb; --blue-100: #06193a; --blue-200: #022248; --blue-300: #002f62;
+    --blue-400: #003771; --blue-500: #004287; --blue-600: #0090ff; --blue-700: #0071f6; --blue-800: #005fd8;
+    --blue-900: #50a8ff; --blue-1000: #ebf6ff; --red-100: #330a11; --red-200: #440d13; --red-300: #5d0e17;
+    --red-400: #6f101b; --red-500: #88151f; --red-600: #f32e40; --red-700: #f13242; --red-800: #e2162a;
+    --red-900: #ff5e63; --red-1000: #ffeaed; --amber-100: #291800; --amber-200: #331b00; --amber-300: #4f2900;
+    --amber-400: #573200; --amber-500: #6c4100; --amber-600: #e99c00; --amber-700: #ffb200; --amber-800: #ff9900;
+    --amber-900: #ff9900; --amber-1000: #fff3d9; --green-100: #00250a; --green-200: #003110; --green-300: #003814;
+    --green-400: #004616; --green-500: #00661d; --green-600: #009431; --green-700: #00ab3e; --green-800: #009335;
+    --green-900: #00ca52; --green-1000: #daffe5;
+    --shadow-border: 0 0 0 1px #ffffff25;
+    --shadow-small: 0 0 0 1px #ffffff25, 0px 1px 2px #00000029;
+    --shadow-medium: 0 0 0 1px #ffffff25, 0px 2px 2px #00000052, 0px 8px 8px -8px #00000029;
+    --shadow-modal: 0 0 0 1px #ffffff25, 0px 1px 1px #00000005, 0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f, 0 0 0 1px #000000;
+    --focus: var(--blue-900);
+    --focus-border: 0 0 0 1px var(--gray-alpha-600), 0 0 0 4px #ffffff3d;
+    --primary-hover: #cccccc;
+  }
+}
+:root {
+  /* Roles used below */
+  --bg: var(--background-200);
+  --surface: var(--background-100);
+  --sunk: var(--gray-100);
+  --ink: var(--gray-1000);
+  --muted: var(--gray-900);
+  --line: var(--gray-alpha-400);
+  --accent: var(--gray-1000);
+  --accent-ink: var(--background-100);
+  --link: var(--blue-900);
+  --ok: var(--green-900);
+  --ok-bg: var(--green-200);
+  --warn: var(--amber-900);
+  --warn-bg: var(--amber-200);
+  --bad: var(--red-900);
+  --bad-bg: var(--red-200);
+  --pass: var(--gray-700);
+  --font: "Geist", Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow-x: hidden; }
+body { background: var(--bg); color: var(--ink); font: 400 14px/20px var(--font); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 64px; display: grid; gap: 24px; }
+[hidden] { display: none !important; }
+:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background-100), 0 0 0 4px var(--focus); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- Geist Button (small: 32px, radius 6; tiny: 24px) ---- */
+.btn, .source-pill, .db-btn, .chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 12px; border: 0; border-radius: 6px; font: 500 14px/20px var(--font); white-space: nowrap; cursor: pointer; transition: background .15s, box-shadow .15s, color .15s; }
+/* secondary */
+.btn, .source-pill { background: var(--background-100); color: var(--gray-1000); box-shadow: 0 0 0 1px var(--gray-400); }
+.btn:hover, .source-pill:hover { background: var(--gray-100); }
+/* primary */
+.btn.primary { background: var(--gray-1000); color: var(--background-100); box-shadow: none; }
+.btn.primary:hover { background: var(--primary-hover); }
+/* tertiary */
+.db-btn { background: transparent; color: var(--gray-1000); }
+.db-btn:hover { background: var(--gray-alpha-200); }
+.btn:disabled, .btn.primary:disabled { background: var(--gray-100); color: var(--gray-700); box-shadow: 0 0 0 1px var(--gray-400); cursor: not-allowed; }
+.btn.icon { width: 32px; padding: 0; }
+@media (prefers-color-scheme: dark) { .btn:hover, .source-pill:hover { background: var(--gray-200); } }
+
+/* ---- Geist Input / Select / Textarea (small) ---- */
+select, input, textarea { height: 32px; padding: 0 12px; border: 0; border-radius: 6px; background: var(--background-100); color: var(--gray-1000); font: 400 14px/20px var(--font); box-shadow: 0 0 0 1px var(--gray-alpha-400); min-width: 0; transition: box-shadow .15s; }
+select:hover, input:hover, textarea:hover { box-shadow: 0 0 0 1px var(--gray-alpha-500); }
+select:focus-visible, input:focus-visible, textarea:focus-visible, select:focus, input:focus, textarea:focus { outline: none; box-shadow: var(--focus-border); }
+::placeholder { color: var(--gray-700); }
+textarea { height: auto; width: 100%; min-height: 64px; padding: 8px 12px; resize: vertical; }
+textarea.doc { min-height: 260px; font: 400 13px/18px var(--mono); margin-top: 8px; }
+textarea.doc.short { min-height: 140px; }
+.label { font: 500 13px/16px var(--font); color: var(--gray-900); }
+
+/* ---- Geist Badge (medium: 24px, 12px medium, pill) ---- */
+.score, .pending { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 12px; border-radius: 9999px; font: 500 12px/24px var(--font); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.score { background: var(--gray-200); color: var(--gray-1000); }       /* gray-subtle */
+.pending { background: var(--amber-700); color: #000000; }                                         /* amber */
+.score .boost { color: var(--gray-900); }
+
+/* ---- Geist Status Dot ---- */
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; background: var(--gray-700); }
+.dot.ok { background: var(--green-700); } .dot.warn { background: var(--amber-700); } .dot.bad { background: var(--red-700); }
+.dot.busy { background: var(--amber-700); animation: pulse 1s infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .dot.busy { animation: none; } }
+
+/* ---- Geist Switch (segmented control): filter tabs and sheet tabs ---- */
+.tabs { display: inline-flex; max-width: 100%; overflow-x: auto; scrollbar-width: none; gap: 0; padding: 4px; border-radius: 6px; background: var(--background-100); box-shadow: 0 0 0 1px var(--gray-alpha-400); justify-self: start; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab, .sheet-tab { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 0; border-radius: 4px; background: transparent; color: var(--gray-900); font: 500 14px/20px var(--font); white-space: nowrap; cursor: pointer; transition: color .15s, background .15s; }
+.tab:hover, .sheet-tab:hover { color: var(--gray-1000); }
+.tab[aria-pressed="true"], .sheet-tab[aria-pressed="true"] { background: var(--gray-100); color: var(--gray-1000); }
+.tab .n { font: 400 13px/20px var(--mono); color: var(--gray-900); }
+.tab-sep { width: 1px; align-self: stretch; margin: 4px; background: var(--gray-alpha-400); flex: none; }
+
+/* ---- Page ---- */
+.topbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.brand { font: 600 16px/24px var(--font); letter-spacing: -.32px; color: var(--gray-1000); }
+.db-group { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; max-width: 100%; }
+.source-pill { min-width: 0; }
+.source-pill > span { overflow: hidden; text-overflow: ellipsis; }
+.source-pill .kind { font: 400 12px/16px var(--mono); color: var(--gray-900); }
+header.search { display: grid; gap: 8px; }
+h1 { font: 600 32px/40px var(--font); letter-spacing: -1.28px; margin: 0; text-wrap: balance; }
+select.search-picker { height: auto; padding: 0; box-shadow: none; background: transparent; font: 600 32px/40px var(--font); letter-spacing: -1.28px; max-width: 100%; }
+.sync-line { font: 400 12px/16px var(--mono); color: var(--gray-900); min-height: 16px; }
+.sync-line.err { color: var(--red-900); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.actions select { flex: 1 1 150px; }
+.hint { font: 400 12px/16px var(--mono); color: var(--gray-900); }
+.link { font: 500 14px/20px var(--font); color: var(--blue-900); text-decoration: none; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.link:hover { text-decoration: underline; }
+.url { font: 400 12px/16px var(--mono); color: var(--gray-900); margin-left: 6px; }
+.empty { font: 400 14px/20px var(--font); color: var(--gray-900); padding: 48px 24px; border-radius: 12px; background: var(--background-100); box-shadow: var(--shadow-border); text-align: center; }
+
+/* ---- Listing card: Geist material-medium ---- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; align-items: start; }
+.grid > * { min-width: 0; }
+/* not in Geist: card layout. A 4:3 photo over a fixed-height body, so cards
+   in a row line up and one card is about an iPhone screen. The body reads as
+   clusters: identity (title, place, lease), fit (distances, features),
+   assessment (summary), yours (contact + notes, link). Long text clamps,
+   rows scroll sideways with edge fades, the text block scrolls when opened. */
+.card { --body-h: 432px; background: var(--background-100); box-shadow: var(--shadow-medium); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.card.archived { opacity: .6; }
+.photo { position: relative; flex: none; aspect-ratio: 4 / 3; background: var(--gray-100); }
+.photo.nophoto { aspect-ratio: auto; height: 84px; }
+.slides { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.slides::-webkit-scrollbar { display: none; }
+.slides .slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.slides img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Labeled photos (e.g. the maker's official product shot): whole image on white, tagged */
+.slides .slide { position: relative; }
+.slides .slide.labeled { background: #fff; }
+.slides .slide.labeled img { object-fit: contain; }
+.plabel { position: absolute; left: 50%; transform: translateX(-50%); bottom: 14px; padding: 0 8px; height: 20px; border-radius: 9999px; font: 500 11px/20px var(--font); background: var(--gray-1000); color: var(--gray-100); pointer-events: none; }
+.lb-slide { position: relative; }
+.lb-slide .plabel { bottom: max(env(safe-area-inset-bottom), 44px); }
+.nophoto-label { position: absolute; right: 12px; bottom: 16px; font: 400 12px/16px var(--mono); color: var(--gray-900); text-decoration: none; }
+.photo .score .ico { width: 12px; height: 12px; margin-right: -1px; }
+.photo .tl { position: absolute; top: 12px; left: 12px; z-index: 2; display: flex; gap: 6px; align-items: center; }
+/* Your rank: tiny pill menu beside the score; ghost "#" until ranked */
+.rank { display: inline-grid; }
+.rank select { appearance: none; -webkit-appearance: none; height: 24px; width: 36px; padding: 0; border-radius: 9999px; font: 600 12px/24px var(--font); font-variant-numeric: tabular-nums; text-align: center; text-align-last: center; cursor: pointer; background: color-mix(in srgb, var(--background-100) 70%, transparent); color: var(--gray-900); box-shadow: inset 0 0 0 1px var(--gray-alpha-400); }
+.rank.on select { background: var(--blue-700, #0070f3); color: #fff; box-shadow: none; }
+.rank select:focus-visible { box-shadow: var(--focus-border); }
+.photo .pending { position: absolute; top: 44px; right: 12px; }
+/* Status: the pill in the corner is the menu */
+.photo .status { position: absolute; top: 12px; right: 12px; z-index: 2; display: inline-grid; }
+.photo .status::after { content: "▾"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; pointer-events: none; color: inherit; }
+.photo .status select { appearance: none; -webkit-appearance: none; height: 24px; padding: 0 24px 0 12px; border-radius: 9999px; font: 500 12px/24px var(--font); background: var(--gray-200); color: var(--gray-1000); box-shadow: none; cursor: pointer; max-width: 170px; text-overflow: ellipsis; }
+.photo .status.g-shortlist select, .photo .status.g-active select, .photo .status.g-done select { background: var(--gray-1000); color: var(--gray-100); }
+.photo .status.g-shortlist, .photo .status.g-active, .photo .status.g-done { color: var(--gray-100); }
+.photo .status select:focus-visible { box-shadow: var(--focus-border); }
+/* not in Geist: scrim so the price and photo count read on any photo */
+.photo:not(.nophoto)::after { content: ""; position: absolute; inset: auto 0 0 0; height: 64px; background: linear-gradient(transparent, rgb(0 0 0 / .55)); pointer-events: none; }
+.photo .price { position: absolute; left: 14px; bottom: 8px; z-index: 1; font: 600 24px/32px var(--font); letter-spacing: -.96px; font-variant-numeric: tabular-nums; color: #ffffff; pointer-events: none; }
+.photo.nophoto .price { color: var(--gray-1000); bottom: 10px; }
+/* Carousel arrows: small targets beside swipe/scroll, hidden at either end */
+.photo .nav { position: absolute; top: 50%; z-index: 2; width: 28px; height: 28px; margin-top: -14px; padding: 0; border: 0; border-radius: 9999px; display: grid; place-items: center; color: var(--gray-1000); background: color-mix(in srgb, var(--background-100) 85%, transparent); cursor: pointer; opacity: .9; transition: opacity .15s; }
+.photo .nav:hover { opacity: 1; }
+.photo .nav .ico { display: block; }
+.photo .prev { left: 8px; } .photo .next { right: 8px; }
+.photo[data-pos="start"] .prev, .photo[data-pos="end"] .next { opacity: 0; pointer-events: none; }
+.count { position: absolute; right: 12px; bottom: 14px; z-index: 1; font: 400 12px/16px var(--mono); color: #ffffff; pointer-events: none; }
+
+.body { height: var(--body-h); padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; min-width: 0; }
+.title a { color: inherit; text-decoration: none; }
+.title a:hover { text-decoration: underline; text-decoration-color: var(--gray-alpha-500); text-underline-offset: 3px; }
+.title .open { display: inline-block; margin-left: 6px; vertical-align: -2px; color: var(--gray-700); }
+.title .open .ico { width: 14px; height: 14px; }
+.title { flex: none; font: 600 16px/22px var(--font); letter-spacing: -.32px; margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+
+/* Metadata rows: location, lease, distances, amenities. One size, one
+   rhythm, a 16px icon column so the text lines up. */
+.meta { flex: none; display: grid; gap: 6px; min-width: 0; }
+.row { display: flex; gap: 8px; align-items: flex-start; min-width: 0; font: 400 14px/20px var(--font); color: var(--gray-900); }
+.row .ico { flex: none; margin-top: 2px; color: var(--gray-700); }
+.row .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row b, .loc .hood, .loc .bldg { color: var(--gray-1000); font-weight: 500; }
+.loc a { color: var(--gray-1000); text-decoration: underline; text-decoration-color: var(--gray-alpha-500); text-underline-offset: 3px; }
+.loc a:hover { text-decoration-color: currentColor; }
+.metric + .metric { margin-left: 8px; }
+.metric.link { font-weight: 500; color: var(--gray-1000); text-decoration: none; white-space: nowrap; }
+.metric.link:hover { text-decoration: underline; }
+.metric .v { font-weight: 500; font-variant-numeric: tabular-nums; color: var(--gray-1000); }
+.metric .u, .subway .u { font-weight: 400; }
+.metric .v.ok { color: var(--green-900); } .metric .v.warn { color: var(--amber-900); } .metric .v.bad { color: var(--red-900); }
+/* Subway lines: MTA-colored bullets grouped by distance */
+.subway { display: inline-flex; align-items: center; gap: 2px; }
+.subway + .subway { margin-left: 8px; }
+.subway .v { margin-left: 3px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--gray-1000); }
+.subway .v.ok { color: var(--green-900); } .subway .v.warn { color: var(--amber-900); } .subway .v.bad { color: var(--red-900); }
+.bullet { display: inline-grid; place-items: center; width: 17px; height: 17px; border-radius: 9999px; font: 700 11px/1 var(--font); font-style: normal; color: #fff; }
+.bullet.dark { color: #000; }
+/* Amenities: compact pills that wrap (two lines at most), in the search's
+   order; filled when the listing has it. Tap to toggle. */
+.amenities .t.chips { white-space: normal; display: flex; flex-wrap: wrap; gap: 4px; max-height: 44px; overflow: hidden; }
+.chip { flex: none; height: 20px; padding: 0 8px; border-radius: 9999px; font: 500 12px/20px var(--font); background: var(--background-100); color: var(--gray-900); box-shadow: inset 0 0 0 1px var(--gray-alpha-400); white-space: nowrap; }
+.chip:hover { background: var(--gray-100); }
+.chip.on { background: var(--gray-1000); color: var(--background-100); box-shadow: none; }
+.chip.on:hover { background: var(--primary-hover); }
+
+.text { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.text > * { flex: none; max-width: 100%; }
+.text.open { overflow-y: auto; overscroll-behavior: contain; }
+.text[data-expand] { cursor: pointer; border-radius: 4px; }
+.text[data-expand]:focus-visible { outline: none; box-shadow: var(--focus-border); }
+.summary { font: 400 14px/20px var(--font); margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.text.open .summary { display: block; }
+.desc { font: 400 13px/18px var(--font); margin: 0; white-space: pre-wrap; color: var(--gray-900); border-top: 1px solid var(--gray-alpha-400); padding-top: 8px; }
+
+.foot { flex: none; display: grid; gap: 8px; }
+/* Contact + notes: one unit */
+.reach { display: grid; border-radius: 6px; box-shadow: var(--shadow-border); background: var(--background-100); overflow: hidden; }
+.reach .contact { padding: 6px 12px; border-bottom: 1px solid var(--gray-alpha-400); }
+.reach textarea, .reach textarea:hover, .reach textarea:focus { min-height: 0; height: 84px; resize: none; border: 0; border-radius: 0; box-shadow: none; }
+.reach textarea:focus { height: 140px; }
+.reach:focus-within { box-shadow: var(--focus-border); }
+.contact { display: flex; gap: 8px; align-items: flex-start; min-width: 0; font: 400 14px/20px var(--font); color: var(--gray-900); }
+.contact .ico { flex: none; margin-top: 2px; color: var(--gray-700); }
+.contact .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.contact b { color: var(--gray-1000); font-weight: 500; }
+.contact a { color: var(--blue-900); font-weight: 500; text-decoration: none; }
+details.more { font: 400 14px/20px var(--font); color: var(--gray-900); }
+details.more summary { cursor: pointer; color: var(--gray-1000); font-weight: 500; }
+details.more p { margin: 8px 0 0; white-space: pre-wrap; color: var(--gray-1000); }
+
+/* ---- Source rows: Geist material-base list ---- */
+section.panel { display: grid; gap: 12px; }
+section.panel h2 { font: 600 16px/24px var(--font); letter-spacing: -.32px; margin: 0; }
+.panel-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.rows { list-style: none; margin: 0; padding: 0; box-shadow: var(--shadow-border); border-radius: 6px; background: var(--background-100); }
+.rows li { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; justify-content: space-between; padding: 12px 16px; }
+.rows li + li { border-top: 1px solid var(--gray-alpha-400); }
+.rows .name { display: inline-flex; gap: 8px; align-items: center; font-weight: 500; }
+.rows .meta { font: 400 12px/16px var(--mono); color: var(--gray-900); }
+.rows .links { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.rows .links a { color: var(--blue-900); font-weight: 500; text-decoration: none; }
+.rows .result { flex-basis: 100%; font: 400 12px/16px var(--mono); color: var(--gray-900); }
+.rows .result.bad { color: var(--red-900); }
+pre.text { white-space: pre-wrap; font: 400 14px/20px var(--font); margin: 8px 0 0; color: var(--gray-1000); max-width: 80ch; }
+
+/* ---- Geist Modal (material-modal) ---- */
+dialog { border: 0; border-radius: 12px; background: var(--background-100); color: var(--gray-1000); padding: 24px; width: min(520px, calc(100vw - 32px)); box-shadow: var(--shadow-modal); }
+dialog::backdrop { background: rgb(0 0 0 / .35); }
+dialog form { display: grid; gap: 16px; }
+dialog h2 { margin: 0; font: 600 24px/32px var(--font); letter-spacing: -.96px; }
+dialog label { display: grid; gap: 8px; font: 500 13px/16px var(--font); color: var(--gray-900); }
+dialog .row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+/* Criteria / sources sheet: pinned to the upper right, under the database group */
+dialog.sheet { position: fixed; inset: 16px 16px auto auto; margin: 0; width: min(600px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 0; display: none; }
+dialog.sheet[open] { display: block; }
+
+/* Lightbox: full-screen photo carousel. Swipe, arrows or arrow keys; Esc,
+   the close button or a tap beside the photo closes it. */
+dialog.lightbox { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border-radius: 0; background: #000; color: #fff; box-shadow: none; overflow: hidden; }
+dialog.lightbox::backdrop { background: #000; }
+.lb-slides { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior: contain; }
+.lb-slides::-webkit-scrollbar { display: none; }
+/* Each photo fills its slide and scales to the largest size that still
+   shows all of it (contain), clear of the close button and counter. */
+.lb-slide { flex: 0 0 100%; height: 100%; min-width: 0; scroll-snap-align: start; box-sizing: border-box; padding: max(env(safe-area-inset-top), 56px) 0 max(env(safe-area-inset-bottom), 44px); }
+.lb-slide img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.lb-btn { position: absolute; z-index: 1; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 9999px; display: grid; place-items: center; color: #fff; background: rgb(255 255 255 / .14); cursor: pointer; }
+.lb-btn:hover { background: rgb(255 255 255 / .24); }
+.lb-btn .ico { width: 20px; height: 20px; }
+.lb-close { top: max(env(safe-area-inset-top), 12px); right: 12px; }
+.lb-nav { top: 50%; margin-top: -20px; }
+.lb-prev { left: 12px; } .lb-next { right: 12px; }
+.lightbox[data-pos="start"] .lb-prev, .lightbox[data-pos="end"] .lb-next, .lightbox[data-pos="only"] .lb-nav { opacity: 0; pointer-events: none; }
+.lb-count { position: absolute; left: 50%; transform: translateX(-50%); bottom: max(env(safe-area-inset-bottom), 16px); font: 400 13px/20px var(--mono); color: rgb(255 255 255 / .8); }
+.sheet-head { position: sticky; top: 0; z-index: 1; display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 12px 12px 12px 16px; background: var(--background-100); border-bottom: 1px solid var(--gray-alpha-400); }
+.sheet-head form { display: block; }
+.sheet-body { display: grid; gap: 12px; padding: 16px; }
+.sheet-body label.sub { display: grid; gap: 2px; font: 600 14px/20px var(--font); letter-spacing: -.28px; margin: 8px 0 -4px; }
+.sheet-body .hint { margin: 0; }
+.sheet-body textarea.doc { margin-top: 0; }
