@@ -66,14 +66,19 @@ const cl = (q, max) => ({ label: q, url: `https://${PLACE.craigslist}.craigslist
 const ITEMS = [
   {
     id: "bed-frame", name: "Bed frame", budget: "$400–$1,500 [confirm]", max: 1800,
-    lookingFor: "A minimal king bed frame in walnut or another hardwood, built to survive a few moves.",
+    lookingFor: "A king bed frame; ideally with a headboard and in solid hardwood.",
     criteria: `${QUALITY}
 
-Must have: King. Walnut first, or another solid hardwood (white oak, cherry, ash). Minimal: clean lines, low profile, no tufting, no sleigh or ornate headboards. Platform or slats (mattress only, no box spring). Disassembles for a walk-up.
-Top tier (e.g.): Herman Miller Nelson Thin Edge, Floyd (walnut), Thuma (walnut), Room & Board (Hudson, Linear), Design Within Reach, Blu Dot Woodrow, Sun at Six, Copeland, Avocado, a good local woodworker.
+Must have: King. That's the only hard rule; the search is wide ("king bed frame") and the rest is a fuzzy filter.
+Prefer, scoring up (not hard rules; keep a post when it's unclear and say what to ask):
+- A headboard (attached or matching). Frames without one score lower but aren't out.
+- Solid hardwood: walnut best, then white oak, cherry, ash, maple. Steel or veneer scores lower; particleboard / MDF is out.
+- Clean, minimal lines: low profile, no tufting, no sleigh or ornate carving.
+- Platform or slats (mattress only, no box spring); disassembles for a walk-up.
+Top tier (e.g.): Herman Miller Nelson Thin Edge, Floyd, Thuma, Room & Board (Hudson, Linear), Design Within Reach, Blu Dot Woodrow, Sun at Six, Copeland, Avocado, a good local woodworker.
 Check: solid wood, not veneer over particleboard (ask or look at the edges); all rails, slats and hardware included; joints tight, no cracks; no upholstered parts from unknown homes.`,
-    queries: ["king bed frame walnut", "walnut bed king", "floyd bed king", "thuma bed king", "nelson bed", "hardwood platform bed king", "room and board bed king"],
-    features: [{ label: "Walnut", points: 3 }, { label: "Solid hardwood", points: 2 }, { label: "All hardware included", points: 1 }],
+    queries: ["king bed frame"],
+    features: [{ label: "Headboard", points: 3 }, { label: "Solid hardwood", points: 3 }, { label: "Walnut", points: 1 }, { label: "All hardware included", points: 1 }],
   },
   {
     id: "standing-desk", name: "Standing desk", budget: "$400–$1,200 [confirm]", max: 1500,
