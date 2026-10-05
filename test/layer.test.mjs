@@ -62,10 +62,12 @@ test("build brands the engine's app", () => {
 });
 
 test("seed: every search has a Sold status, the shared metrics and its three sources", () => {
-  assert.equal(snapshot.searches.length, 4);
+  assert.deepEqual(snapshot.searches.map(s => s.id), ["bed-frame", "standing-desk", "desk-chair", "sleeper-sofa"], "priority order");
   for (const s of snapshot.searches) {
     assert.ok(s.statuses.some(x => x.label === "Sold" && x.group === "archived"), s.id);
-    assert.deepEqual(s.metrics.map(m => m.field), ["Model", "% of retail", "Pickup (mi)", "Product page"]);
+    assert.deepEqual(s.metrics.map(m => m.field), ["Model", "Condition", "% of retail", "Product page"]);
+    assert.equal(s.collection, "New York");
+    assert.ok(s.home && !/\[/.test(s.home), "a home the geocoder can read");
     const src = snapshot.sources.filter(x => x.searchIds[0] === s.id);
     assert.deepEqual(src.map(x => x.name), ["Craigslist", "Facebook Marketplace", "Curated resale"]);
     assert.equal(src[0].crawler, "craigslist");

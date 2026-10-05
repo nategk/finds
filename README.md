@@ -1,8 +1,8 @@
 # Finds
 
 A [Shortlist](https://github.com/nategk/shortlist) board for buying
-high-quality second-hand things: right now a desk chair, standing desk, bed
-frame and pull-out couch in New York; later anything (a bike, skis, a
+high-quality second-hand things: right now a king bed frame, a standing
+desk, a desk chair and a pull-out couch in New York; later anything (a bike, skis, a
 camera) anywhere. Each item is its own search with its own rubric. Listings
 arrive daily from Craigslist and, through a Claude-in-Chrome routine, from
 Facebook Marketplace. Each one is scored on its text and photos, matched to
@@ -10,7 +10,10 @@ the maker's product page, and given the official product image as its last
 photo.
 
 Where you are (city, home base, Craigslist area, Facebook city) is one
-`PLACE` block in `seed/searches.mjs`; nothing else is tied to a city.
+`PLACE` block in `seed/searches.mjs`; nothing else is tied to a city. The
+city's items form one board: a tab per item, status tabs inside, and every
+card shows its distance from your home / delivery location (set it in
+Criteria) with Google Maps directions.
 
 ## How it's built
 
