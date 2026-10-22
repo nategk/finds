@@ -63,6 +63,14 @@ TEST_DATABASE_URL=postgres://user:pass@localhost/shortlist_test npm test
 Tests drop tables, so they only use `TEST_DATABASE_URL` (localhost) and
 ignore the deployment's credentials.
 
+### Facebook Marketplace (optional, Chrome extension)
+
+Marketplace only opens when you're signed in, so it isn't crawled. Instead,
+the extension in `extension/` sends listings you're looking at in desktop
+Chrome to your board: load it unpacked from `chrome://extensions`, enter your
+Shortlist URL, admin token and search, then use **Send this page's listings**
+on a Marketplace results page. See [`extension/README.md`](extension/README.md).
+
 ### Airtable (optional, two-way)
 
 Keep an Airtable base in step with the app: every change in the app shows
