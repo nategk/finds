@@ -42,7 +42,10 @@ browsing. Your account is what's at risk, so:
 > 2. For each link: open it in a new tab in my Chrome, wait for results, and
 >    read the first screen or two of result cards. For each card collect
 >    `{ key: "fb-<item id from /marketplace/item/<id>/>", title, price,
->    location, url }`.
+>    location, url }`. Links labeled "(ships, US)" search sellers anywhere
+>    who ship: if the Shipping filter isn't applied on the page, pick
+>    "Shipping" under Delivery method yourself, and put the shipping price
+>    (if shown) in `location`.
 > 3. POST `$FINDS_URL/api/intake` with `Authorization: Bearer
 >    $FINDS_ADMIN_TOKEN` and `{ searchId, source: "Facebook Marketplace",
 >    step: "screen", candidates }` (all cards for that search, deduped by
