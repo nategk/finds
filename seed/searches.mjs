@@ -60,25 +60,33 @@ const FEATURES = item => [
 // Chrome routine (routines/fb-refresh.md) walks these and sends results to
 // /api/intake; they're also one-tap links in the Sources panel.
 const fb = (q, max) => ({ label: q, url: `https://www.facebook.com/marketplace/${PLACE.facebook}/search?query=${encodeURIComponent(q)}&maxPrice=${max}&sortBy=creation_time_descend&exact=false` });
+// Same search, any seller in the US who ships (Marketplace's "Shipping" delivery filter).
+const fbShip = (q, max) => ({ label: `${q} (ships, US)`, url: `https://www.facebook.com/marketplace/${PLACE.facebook}/search?query=${encodeURIComponent(q)}&maxPrice=${max}&deliveryMethod=shipping&sortBy=creation_time_descend&exact=false` });
 const cl = (q, max) => ({ label: q, url: `https://${PLACE.craigslist}.craigslist.org/search/fua?query=${encodeURIComponent(q)}&max_price=${max}` });
+
+// For an item's `wide` queries (a specific piece worth shipping or a long
+// drive), Craigslist is searched around these metros, 250 mi each.
+const HUBS = ["10023", "02108", "19103", "20001", "05401", "30303", "60601", "75201", "80202", "90012", "94103", "98101"];
 
 // In priority order: the board's tabs follow it.
 const ITEMS = [
   {
-    id: "bed-frame", name: "Bed frame", budget: "$400–$1,500 [confirm]", max: 1800,
-    lookingFor: "A king bed frame; ideally with a headboard and in solid hardwood.",
+    id: "bed-frame", name: "Bed frame", budget: "$400–$2,000 [confirm]", max: 2500,
+    lookingFor: "The Roseland Bed in king (solid cherry or black walnut), used; otherwise a king in solid hardwood with a headboard and the same quiet Shaker lines.",
     criteria: `${QUALITY}
 
-Must have: King. That's the only hard rule; the search is wide ("king bed frame") and the rest is a fuzzy filter.
-Prefer, scoring up (not hard rules; keep a post when it's unclear and say what to ask):
-- A headboard (attached or matching). Frames without one score lower but aren't out.
-- Solid hardwood: walnut best, then white oak, cherry, ash, maple. Steel or veneer scores lower; particleboard / MDF is out.
-- Clean, minimal lines: low profile, no tufting, no sleigh or ornate carving.
-- Platform or slats (mattress only, no box spring); disassembles for a walk-up.
-Top tier (e.g.): Herman Miller Nelson Thin Edge, Floyd, Thuma, Room & Board (Hudson, Linear), Design Within Reach, Blu Dot Woodrow, Sun at Six, Copeland, Avocado, a good local woodworker.
-Check: solid wood, not veneer over particleboard (ask or look at the edges); all rails, slats and hardware included; joints tight, no cracks; no upholstered parts from unknown homes.`,
-    queries: ["king bed frame"],
-    features: [{ label: "Headboard", points: 3 }, { label: "Solid hardwood", points: 3 }, { label: "Walnut", points: 1 }, { label: "All hardware included", points: 1 }],
+The one I want: the Roseland Bed (roselandusa.com/products/the-bed), king. Shaker-dormitory design from a small Hudson Valley maker: solid American cherry or black walnut, single-stave square posts and rails, a 3/4" headboard of three wide boards set in slotted posts, Häfele steel corner brackets, linseed-oil finish, optional machined steel casters. New, king: $1,950 cherry, $2,950 walnut (+$100 casters), ships free in the lower 48. Their Pediment Bed is the sibling: a near miss.
+Scoring:
+- 10: a Roseland Bed, king (or Cal King), any finish, under ~75% of new. Worth shipping or a long drive from anywhere in the US.
+- 9: a Roseland Bed in queen, or a Roseland Pediment Bed in king.
+- 8: a king Shaker-style bed in solid cherry or walnut from a serious maker (Thos. Moser, Copeland, Shaker Workshops, Chilton, a named local woodworker): square posts, plain board headboard, no carving.
+- 6-7: any other king in solid hardwood with a headboard and clean lines.
+- Lower: no headboard, veneer, steel, sleigh / carved / tufted.
+Must have (except a Roseland, where size is negotiable): King. Platform or slats (mattress only, no box spring); disassembles for a walk-up.
+Check: solid wood, not veneer over particleboard (ask or look at the edges); all rails, slats and brackets included; joints tight, no cracks.`,
+    queries: ["king bed frame", "cherry king bed", "walnut king bed"],
+    wide: ["roseland bed", "shaker bed"],
+    features: [{ label: "Roseland", points: 5 }, { label: "Headboard", points: 3 }, { label: "Solid hardwood", points: 3 }, { label: "Walnut", points: 1 }, { label: "All hardware included", points: 1 }],
   },
   {
     id: "standing-desk", name: "Standing desk", budget: "$400–$1,200 [confirm]", max: 1500,
@@ -128,9 +136,12 @@ export const snapshot = {
   sources: ITEMS.flatMap(it => [
     { id: `${it.id}-craigslist`, searchIds: [it.id], name: "Craigslist", access: "Automatic (daily)", crawler: "craigslist",
       method: "Craigslist search API, furniture category", links: it.queries.slice(0, 3).map(q => cl(q, it.max)),
-      config: { area: PLACE.craigslist, category: "fua", maxPrice: it.max, searches: it.queries.map(query => ({ query })) } },
+      config: { area: PLACE.craigslist, category: "fua", maxPrice: it.max, searches: [
+        ...it.queries.map(query => ({ query })),
+        ...(it.wide || []).flatMap(query => HUBS.map(postal => ({ query, postal, radius: 250 }))),
+      ] } },
     { id: `${it.id}-facebook`, searchIds: [it.id], name: "Facebook Marketplace", access: "Manual (Chrome routine / share)",
-      method: "Claude in Chrome reads these saved searches and sends results to /api/intake", links: it.queries.slice(0, 4).map(q => fb(q, it.max)),
+      method: "Claude in Chrome reads these saved searches and sends results to /api/intake", links: [...(it.wide || []).map(q => fbShip(q, it.max)), ...it.queries.slice(0, 4).map(q => fb(q, it.max))],
       notes: "Signed-in only; never crawled from the server. See routines/fb-refresh.md." },
     { id: `${it.id}-shops`, searchIds: [it.id], name: "Curated resale", access: "Manual (links)",
       method: "Saved searches; crawlers to come", links: [
