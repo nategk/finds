@@ -68,6 +68,7 @@ Inside the browser app:
 | `lib/sync.js`, `lib/airtable.js` | Neon ↔ Airtable sync, and the Airtable REST client. |
 | `lib/crawl.js`, `lib/crawlers/`, `lib/score.js` | Crawling and Claude scoring. |
 | `lib/intake.js` | Listings sent in from a signed-in browser or a phone, through the same screen → score → save pipeline. |
+| `extension/` | Chrome extension that reads Facebook Marketplace pages in your own browser and sends them to intake (`extension/README.md`). |
 | `lib/layer.js` | Extension points for a layer (a separate deployment built on this engine): extra crawlers and post-scoring enrichers. |
 | `scripts/dev.mjs`, `scripts/remote.mjs`, `test/` | Local stand-in for Vercel; terminal access to a live deployment; tests against a local Postgres and an in-memory Airtable. |
 
@@ -275,6 +276,12 @@ reply names the few worth opening. It opens those and sends `{…, step:
 through steps 3–6 above under a source of that name, created on first use.
 Photo URLs from such sites often expire within hours, so they're copied to
 Blob immediately.
+The Chrome extension in `extension/` is that browser session for Facebook
+Marketplace: on a results page it sends the loaded cards to the screen step,
+then opens each pick in a background tab one at a time, reads it
+(`extension/extract.js`: the listing JSON Facebook embeds, else the visible
+text) and sends it to the add step. It runs only on a click, in the user's
+own signed-in browser.
 
 Criteria, features and the contact template are editable in the UI
 (`PATCH /api/searches/:id`), queued offline like triage.

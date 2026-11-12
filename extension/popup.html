@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shortlist</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header>
+  <h1>Shortlist</h1>
+  <button id="toggle-settings" class="link" type="button">Settings</button>
+</header>
+
+<form id="settings" hidden>
+  <label for="baseUrl">Shortlist URL</label>
+  <input id="baseUrl" type="url" placeholder="https://your-app.vercel.app" required>
+  <label for="token">Admin token</label>
+  <input id="token" type="password" autocomplete="off" required>
+  <label for="searchId">Search</label>
+  <select id="searchId"><option value="">Save to load your searches</option></select>
+  <label for="source">Source name</label>
+  <input id="source" type="text" placeholder="Facebook Marketplace">
+  <p class="hint">Stored only in this browser. The token lets the extension add listings to your board.</p>
+  <button type="submit">Save</button>
+</form>
+
+<main id="main">
+  <p id="where" class="where"></p>
+  <div class="actions">
+    <button id="screen" type="button" hidden>Send this page's listings</button>
+    <button id="addPicks" type="button" hidden>Open and add picks</button>
+    <button id="addThis" type="button" hidden>Add this listing</button>
+    <button id="cancel" type="button" class="quiet" hidden>Stop</button>
+  </div>
+  <p id="status" class="status" role="status"></p>
+  <ol id="picks" class="picks"></ol>
+  <ul id="errors" class="errors"></ul>
+</main>
+<script src="extract.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
