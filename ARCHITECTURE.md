@@ -260,6 +260,12 @@ left out aren't marked seen, so a later run can still screen them. Re-score
 (below) scores the backlog once Claude is back. Sites that
 refuse automated access are recorded as `blocked`, never worked around.
 
+**Moving photos between Blob stores.** `POST /api/admin/rehost` (admin token)
+copies photos stored in a different Blob store (a project folded into this
+one) into this deployment's own store, ten listings per call: while the
+reply says `more`, call again with its `after`. Each photo keeps its old
+URL as `original`. Run it before deleting the old store.
+
 **Re-scoring.** `POST /api/admin/rescore {searchId, all?}` (admin token)
 scores a search's listings again in place, with the same scoring and
 enrichers as a crawl: unscored ones (saved before there was an API key) by

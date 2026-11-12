@@ -30,6 +30,9 @@
     },
     "api/admin/boards.js": {
       "maxDuration": 60
+    },
+    "api/admin/rehost.js": {
+      "maxDuration": 300
     }
   },
   "headers": [
