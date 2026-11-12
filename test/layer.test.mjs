@@ -175,6 +175,43 @@ test("intake: replies with board links, takes data: photos, and publishes a plan
   assert.equal((await api.intake.GET(req("/api/intake"))).status, 400);
 });
 
+test("rehost: finds photos in another Blob store; admin only; needs a store", { skip }, async () => {
+  const rehost = await import("../api/admin/rehost.js");
+  const photos = await import("../lib/photos.js");
+  const pg = await import("../lib/postgres.js");
+  const post = headers => rehost.POST(req("/api/admin/rehost", { method: "POST", headers, body: "{}" }));
+  assert.equal((await post({})).status, 401);
+  assert.equal((await post(auth)).status, 400, "no Blob store connected");
+
+  process.env.BLOB_READ_WRITE_TOKEN = "vercel_blob_rw_NEWstore123_secretpart";
+  try {
+    assert.equal(photos.ownBlobHost(), "newstore123.public.blob.vercel-storage.com");
+    assert.ok(photos.isOwnBlob("https://newstore123.public.blob.vercel-storage.com/photos/a.jpg"));
+    assert.ok(!photos.isOwnBlob("https://oldstore456.public.blob.vercel-storage.com/photos/a.jpg"));
+    await db().query("delete from listings where id like 'rh-%'");
+    for (const [id, url] of [["rh-old", "https://oldstore456.public.blob.vercel-storage.com/photos/a.jpg"], ["rh-new", "https://newstore123.public.blob.vercel-storage.com/photos/b.jpg"], ["rh-ext", "https://images.craigslist.org/c.jpg"]]) {
+      await db().query("insert into listings (id, search_id, title, photos) values ($1, 'search-desk', $1, $2)", [id, JSON.stringify([{ id: "p", url }])]);
+    }
+    const foreign = await pg.listingsWithForeignPhotos(photos.ownBlobHost());
+    assert.deepEqual(foreign.map(l => l.id), ["rh-old"], "only photos in a different Blob store");
+    assert.deepEqual((await pg.listingsWithForeignPhotos(photos.ownBlobHost(), { after: "rh-old" })).map(l => l.id), []);
+    // The copy itself needs a real store; a fake one fails the fetch/put and the photo is left as it was.
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = async () => new Response("no", { status: 403 });
+    try {
+      const body = await (await post(auth)).json();
+      assert.equal(body.copied, 0);
+      assert.ok(body.failed >= 1);
+      assert.equal((await pg.listingsWithForeignPhotos(photos.ownBlobHost())).length, 1, "left for a retry");
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  } finally {
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    await db().query("delete from listings where id like 'rh-%'");
+  }
+});
+
 test("rescore: admin only, needs scoring", { skip }, async () => {
   const rescore = await import("../api/admin/rescore.js");
   const post = (headers) => rescore.POST(req("/api/admin/rescore", { method: "POST", headers, body: JSON.stringify({ searchId: "search-desk" }) }));
