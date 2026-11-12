@@ -251,8 +251,17 @@ source with a `crawler` (`lib/crawlers/`: `craigslist` (any category),
    made without Blob) is copied now; what doesn't fit before the deadline is
    retried next run. The UI reports saved / failed / left.
 
-One crawl per search per 10 minutes (the endpoint is public). Scoring needs
-`ANTHROPIC_API_KEY`; without it listings are added unscored. A crawl never
+One crawl per search per 10 minutes (the endpoint is public).
+
+**Claude refinement** is everything the app asks Claude to do to a listing:
+screening new posts, scoring them, finding the maker's page, re-scoring. It
+runs when `ANTHROPIC_API_KEY` is set. Set `CLAUDE_REFINEMENT=off` (or `0`,
+`false`, `no`) to turn all of it off without removing the key; change it
+back (or delete it) to turn it on. `/api/health` reports `setup.scoring`
+(a key is set) and `setup.claudeRefinement` (it will run). Without
+refinement, listings are still added, the first 12 new posts per source,
+unscreened and unscored; the source's result says "not screened (Claude
+refinement is off)". A crawl never
 stops because Claude can't answer (no key, no credit, an outage): the first
 12 new posts per source go in unscreened, the source's result says "not
 screened (why)", each card's summary says why it isn't scored, and the posts
