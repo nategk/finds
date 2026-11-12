@@ -2,7 +2,7 @@
 // store, render, and route UI events to store writes.
 import { ADAPTERS, loadConnection, saveConnection, createAdapter, connectionKey } from "./adapters/index.js";
 import { Store } from "./store.js";
-import { fit, parseFeatures, featuresText, groupOf, rankable, rerank, boards, archived } from "./model.js";
+import { fit, parseFeatures, featuresText, groupOf, rankable, rerank, boards, archived, slug } from "./model.js";
 import * as ui from "./ui.js";
 
 const $ = s => document.querySelector(s);
@@ -27,6 +27,24 @@ const link = (() => {
   return { search: q.get("s") || "", listing: q.get("l") || "" };
 })();
 let focus = { id: "", until: 0, timer: null };
+
+// Addresses: every shortlist has its own, /<name> (/sleeper-sofa). Opening
+// one picks it; moving between them updates the address (Back works).
+let route = pathRoute();
+let lastPath = "";
+function pathRoute() {
+  const parts = location.pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  return { name: parts[parts.length - 1] || "" };
+}
+function applyRoute(state) {
+  if (!route || !route.name) { route = null; return; }
+  if (!state.searches.length) return;   // not loaded yet
+  const s = state.searches.find(x => slug(x.name) === route.name) || state.searches.find(x => x.id === route.name);
+  if (s) { view.searchId = s.id; pref.set("search", s.id); }
+  route = null;
+}
+const pathFor = search => (search ? "/" + slug(search.name) : "/");
+addEventListener("popstate", () => { route = pathRoute(); if (store) render(); });
 function applyLink(state) {
   if (!link.search && !link.listing) return;
   if (link.listing) {
@@ -43,7 +61,7 @@ function applyLink(state) {
   } else return;
   pref.set("search", view.searchId); pref.set("tab", view.tab);
   link.search = link.listing = "";
-  history.replaceState(null, "", location.pathname);
+  history.replaceState(null, "", location.pathname);   // the path is set by render()
 }
 
 async function boot() {
@@ -54,10 +72,12 @@ async function boot() {
   store.pull().then(() => store.flush());
 }
 
+// The search on screen: the one picked (archived ones too, when opened from
+// the Shortlists menu), else the first active one.
 function currentSearch(state) {
   const shown = state.searches.filter(s => !archived(s));
   const active = shown.filter(s => s.state !== "Done");
-  return shown.find(s => s.id === view.searchId) || active[0] || shown[0] || null;
+  return state.searches.find(s => s.id === view.searchId) || active[0] || shown[0] || state.searches[0] || null;
 }
 
 // Ranked listings in a search (shortlist / in progress, with a rank).
@@ -83,6 +103,7 @@ function listingsFor(state, search) {
 function render() {
   const { state, status } = store;
   applyLink(state);
+  applyRoute(state);
   const search = currentSearch(state);
   const d = adapter.describe();
   const listings = listingsFor(state, search);
@@ -92,21 +113,30 @@ function render() {
   $("#source-kind").textContent = d.kind + (d.writable ? "" : " · read-only");
   $("#source-dot").className = "dot " + (status.syncing ? "busy" : status.error ? "bad" : !status.online ? "warn" : status.lastPulled ? "ok" : "");
 
-  // Header: the board (searches sharing a collection; a picker when there's
-  // more than one board), then a tab per item on it.
-  const all = boards(state.searches);
-  const board = search && all.find(b => b.searches.includes(search));
+  // Header: one tab per shortlist (archived ones only when open), and the
+  // ⋯ button that opens the Shortlists menu (add, rename, archive).
+  const tabItems = state.searches.filter(s => !archived(s) || s === search);
   if (search) {
-    $("#title-wrap").innerHTML = all.length > 1
-      ? `<select class="search-picker" id="search-picker" aria-label="Board">${all.map(b => `<option value="${ui.esc(b.key)}"${b === board ? " selected" : ""}>${ui.esc(b.name)}</option>`).join("")}</select>`
-      : ui.esc(board.name);
-    document.title = (board.searches.length > 1 ? search.name + " · " + board.name : board.name) + " · " + (document.querySelector(".brand")?.textContent || "Shortlist");
+    $("#title-wrap").innerHTML = ui.esc(search.name) + (archived(search) ? ` <span class="arch">Archived</span>` : "");
+    document.title = search.name + " · " + (document.querySelector(".brand")?.textContent || "Shortlist");
   } else {
-    $("#title-wrap").textContent = store.hasData ? "Listings" : status.syncing ? "Loading…" : "No searches yet";
+    $("#title-wrap").textContent = store.hasData ? "No shortlists yet" : status.syncing ? "Loading…" : "No shortlists yet";
   }
   const openCount = s => listingsFor(state, s).filter(l => groupOf(s, l.status) !== "archived").length;
-  $("#items").hidden = !(board && board.searches.length > 1);
-  $("#items").innerHTML = board && board.searches.length > 1 ? ui.items(board.searches, search, openCount) : "";
+  $("#items").hidden = !store.hasData && !state.searches.length;
+  $("#items").innerHTML = ui.items(tabItems, search || {}, openCount) + `<button class="item more" type="button" id="board-btn" aria-label="Shortlists: add, rename, archive">⋯</button>`;
+  // Refresh the open Shortlists menu, unless an edit is in progress there.
+  if ($("#lists").open && !$("#lists form.rename, #lists form.confirm") && !$("#lists").contains(document.activeElement?.closest("form"))) renderLists();
+  // Keep the address on the open shortlist / item. A new place is a new
+  // history entry; the first render just corrects the address.
+  if (search && !route && !link.search && !link.listing) {
+    const path = pathFor(search);
+    if (path !== location.pathname) {
+      if (lastPath) history.pushState(null, "", path + location.search + location.hash);
+      else history.replaceState(null, "", path + location.search + location.hash);
+    }
+    lastPath = path;
+  }
 
   // Sync line
   const pending = state.outbox.length;
@@ -160,7 +190,10 @@ function render() {
     fillDoc("#home", search.home);
     $("#home-hint").textContent = !search.home ? "Set it to see how far each listing is, with directions."
       : search.homeGeo ? `Found: ${search.homeGeo.label} (${search.homeGeo.fidelity})` : "Locating…";
-    $("#home-shared").hidden = !(board && board.searches.length > 1);
+    // Shortlists in the same collection share one home location.
+    const sharing = state.searches.filter(x => x.collection && x.collection === search.collection && x.id !== search.id).map(x => x.name);
+    $("#home-shared").hidden = !sharing.length;
+    $("#home-shared").textContent = sharing.length ? "; also used by " + sharing.join(", ") : "";
     fillDoc("#criteria", search.criteria);
     fillDoc("#contact", search.contactTemplate);
     fillDoc("#features", featuresText(search.features));
@@ -228,7 +261,7 @@ document.addEventListener("click", e => {
   const item = e.target.closest("button[data-search]");
   if (item) {
     view.searchId = item.dataset.search; pref.set("search", view.searchId);
-    const b = boards(store.state.searches).find(x => x.searches.some(s => s.id === view.searchId));
+    const b = boards(store.state.searches, { all: true }).find(x => x.searches.some(s => s.id === view.searchId));
     if (b) pref.set("item:" + b.key, view.searchId);
     render(); return;
   }
@@ -319,12 +352,7 @@ document.addEventListener("change", e => {
     if (l && l.rank != null && !rankable(groupOf(search, status))) setRank(id, null);
   }
   if (e.target.matches("select[data-rank]")) setRank(e.target.closest(".card").dataset.id, e.target.value ? Number(e.target.value) : null);
-  if (e.target.id === "search-picker") {
-    // Back to the item last open on that board, else its first.
-    const b = boards(store.state.searches).find(x => x.key === e.target.value);
-    if (b) view.searchId = pref.get("item:" + b.key, "") && b.searches.some(s => s.id === pref.get("item:" + b.key, "")) ? pref.get("item:" + b.key, "") : b.searches[0].id;
-    pref.set("search", view.searchId); render();
-  }
+
 });
 const noteTimers = {};
 document.addEventListener("input", e => {
@@ -359,7 +387,7 @@ for (const [sels, btn, hint, label, patchOf] of [
     if ("home" in patch) {
       if (patch.home === (search.home || "")) delete patch.home;
       else {
-        const b = boards(store.state.searches).find(x => x.searches.includes(search));
+        const b = boards(store.state.searches, { all: true }).find(x => x.searches.includes(search));
         for (const s of b.searches) if (s.id !== search.id) await store.update(s.id, { home: patch.home, homeGeo: null }, "search");
         patch.homeGeo = null;
       }
@@ -467,5 +495,79 @@ if ("serviceWorker" in navigator) {
     if (hadController) reloadWhenIdle();
   });
 }
+
+// ---- Shortlists menu: jump between shortlists; add, rename, archive,
+// delete them and their items. Editing goes to /api/admin/boards with the
+// admin token, kept on this device only. ----
+const adminToken = {
+  get() { try { return localStorage.getItem("shortlist.admin") || ""; } catch (e) { return ""; } },
+  set(v) { try { v ? localStorage.setItem("shortlist.admin", v) : localStorage.removeItem("shortlist.admin"); } catch (e) {} },
+};
+let listsMsg = "";   // the menu's status line ("Saving…", "Renamed.", an error)
+function renderLists() {
+  const state = store.state;
+  const counts = x => state.listings.filter(l => (l.searchIds || []).includes(x.id)).length;
+  $("#lists-body").innerHTML = ui.listsSheet({ searches: state.searches, current: currentSearch(state), counts, canEdit: !!adminToken.get() });
+  $("#lists-hint").textContent = listsMsg;
+}
+async function manageBoards(body, done) {
+  const say = m => { listsMsg = m; const h = $("#lists-hint"); if (h) h.textContent = m; };
+  say("Saving…");
+  try {
+    const res = await fetch("api/admin/boards", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + adminToken.get() }, body: JSON.stringify(body) });
+    const out = await res.json().catch(() => ({}));
+    if (res.status === 401) { adminToken.set(""); throw new Error("That admin token didn't work; unlock again."); }
+    if (!res.ok) throw new Error(out.error || "HTTP " + res.status);
+    await store.pull();
+    if (out.searchId) { view.searchId = out.searchId; pref.set("search", view.searchId); }
+    listsMsg = done;
+    render();
+    renderLists();
+  } catch (e) {
+    say(e.message);
+    renderLists();
+  }
+}
+document.addEventListener("click", e => {
+  if (e.target.closest("#board-btn")) { listsMsg = ""; renderLists(); $("#lists").showModal(); return; }
+  if (!e.target.closest("#lists")) return;
+  const item = e.target.closest("[data-open]");
+  if (item) { view.searchId = item.dataset.open; view.tab = "all"; pref.set("search", view.searchId); pref.set("tab", "all"); $("#lists").close(); render(); return; }
+  const act = e.target.closest("[data-act]");
+  if (!act) return;
+  const a = act.dataset.act;
+  if (a === "lock") { adminToken.set(""); renderLists(); return; }
+  const li = act.closest("li"), searchId = li?.dataset.item;
+  const name = li?.querySelector("b")?.textContent || "";
+  if (a === "rename" || a === "rename-item") {
+    // Rename in place: the row's name becomes an input; Enter saves.
+    const b = li.querySelector(".go");
+    b.outerHTML = `<form class="inline rename" data-form="${a}"><input name="name" value="${ui.esc(name)}" aria-label="New name" required><button class="btn small primary" type="submit">Save</button></form>`;
+    li.querySelector("input").select();
+    return;
+  }
+  if (a === "delete" || a === "delete-item") {
+    li.querySelector(".acts").outerHTML = `<form class="inline confirm" data-form="${a}"><input name="confirm" placeholder="Type “${ui.esc(name)}” to delete" aria-label="Confirm by typing the name" required><button class="btn small danger" type="submit">Delete for good</button></form>`;
+    li.querySelector("input").focus();
+    return;
+  }
+  manageBoards({ action: a, searchId }, a.includes("unarchive") ? "Unarchived." : "Archived.");
+});
+document.addEventListener("submit", e => {
+  const form = e.target.closest("#lists form[data-form]");
+  if (!form) return;
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(form)), kind = form.dataset.form;
+  const li = form.closest("li"), searchId = li?.dataset.item;
+  if (kind === "unlock") { adminToken.set(f.token.trim()); renderLists(); return; }
+  const body = {
+    create: { action: "create", name: f.name, item: f.name },
+    "rename-item": { action: "rename-item", searchId, name: f.name },
+    "delete-item": { action: "delete-item", searchId, confirm: f.confirm },
+  }[kind];
+  const said = { create: "Created.", "rename-item": "Renamed.", "delete-item": "Deleted." }[kind];
+  if (body) manageBoards(body, said);
+});
+$("#lists").addEventListener("click", e => { if (e.target === $("#lists")) $("#lists").close(); });
 
 boot();

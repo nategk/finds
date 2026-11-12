@@ -86,11 +86,17 @@ Listing  id, searchIds[], title, price, score, status, notes, url, location,
 Source   id, searchIds[], name, access, links: [{label, url}], method, lastChecked, notes
 ```
 
-**Boards.** Searches that share a `collection` are one board: the header
-names the collection (a picker when there are several boards) and each
-search is a tab across the top (Bed frame · Standing desk · …), with the
-status tabs inside it. A search with no collection is a board of its own,
-as before.
+**Shortlists.** Every search is a shortlist with its own tab across the top
+(Sleeper sofa · Rugs · King bed frame · NY Car · ⋯) and its own address,
+`/<name>` (`/sleeper-sofa`), with the status tabs inside it. The ⋯ tab
+opens the Shortlists menu: jump to any one (archived ones included), add,
+rename, archive, unarchive and delete (delete asks for the name). Editing
+there goes to `POST /api/admin/boards` with the admin token, entered once
+per device. An archived shortlist has no tab and isn't crawled; its
+listings stay. Renaming one renames its address. `vercel.json` rewrites
+every non-file path to the app; the service worker serves the cached app
+for any address offline. Searches that share a `collection` share one
+home location (below).
 
 **Home / delivery location.** Each search has a `home` (edited in the
 Criteria sheet; shared by every search on the board). The server geocodes

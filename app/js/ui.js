@@ -307,3 +307,28 @@ export function ago(ts) {
   if (s < 86400) return Math.round(s / 3600) + " h ago";
   return new Date(ts).toLocaleDateString();
 }
+
+// ---- Shortlists menu (the ⋯ tab) ----
+
+const rowActions = (canEdit, acts) => !canEdit ? "" :
+  `<span class="acts">${acts.map(([act, label]) => `<button class="btn small" type="button" data-act="${act}">${esc(label)}</button>`).join("")}</span>`;
+
+// Every shortlist (active, then archived) with rename / archive / delete,
+// and adding a new one. Editing needs the admin token, saved on this device.
+export function listsSheet({ searches, current, counts, canEdit }) {
+  const isOff = s => /^archived$/i.test(s.state || "");
+  const row = s => `<li class="${s === current ? "current" : ""}${isOff(s) ? " off" : ""}" data-item="${esc(s.id)}">
+      <button class="go" type="button" data-open="${esc(s.id)}"><b>${esc(s.name)}</b> <span class="meta">${counts(s)} listing${counts(s) === 1 ? "" : "s"}</span></button>
+      ${rowActions(canEdit, isOff(s) ? [["unarchive-item", "Unarchive"], ["delete-item", "Delete"]] : [["rename-item", "Rename"], ["archive-item", "Archive"]])}
+    </li>`;
+  const active = searches.filter(s => !isOff(s)), old = searches.filter(isOff);
+  return `
+    <section><ul class="rows lists">${active.map(row).join("") || `<li class="meta">None yet.</li>`}</ul>
+      ${canEdit ? `<form class="inline" data-form="create"><input name="name" placeholder="New shortlist, e.g. Gravel bike" aria-label="New shortlist" required><button class="btn primary" type="submit">Add</button></form>` : ""}</section>
+    ${old.length ? `<details class="archived-lists"${old.includes(current) ? " open" : ""}><summary>Archived (${old.length})</summary><ul class="rows lists">${old.map(row).join("")}</ul></details>` : ""}
+    <section class="unlock">${canEdit
+      ? `<span class="hint">Editing is unlocked on this device.</span> <button class="btn small" type="button" data-act="lock">Lock</button>`
+      : `<form class="inline" data-form="unlock"><input name="token" type="password" autocomplete="off" placeholder="Admin token" aria-label="Admin token" required><button class="btn" type="submit">Unlock editing</button></form>
+         <span class="hint">To add, rename, archive or delete. The token is ADMIN_TOKEN in the deployment's settings; it stays on this device.</span>`}</section>
+    <p class="hint" id="lists-hint" role="status"></p>`;
+}

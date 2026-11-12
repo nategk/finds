@@ -44,6 +44,8 @@ createServer(async (req, res) => {
     let path = normalize(join(APP, decodeURIComponent(url.pathname)));
     if (!path.startsWith(APP)) { res.writeHead(403).end(); return; }
     if ((await stat(path).catch(() => null))?.isDirectory()) path = join(path, "index.html");
+    // App paths (/furniture/sleeper-sofa) serve the app, like vercel.json's rewrite.
+    else if (!extname(path) && !(await stat(path).catch(() => null))) path = join(APP, "index.html");
     const body = await readFile(path);
     res.writeHead(200, { "content-type": TYPES[extname(path)] || "application/octet-stream" }).end(body);
   } catch (e) {
