@@ -15,7 +15,7 @@ const SEARCH = {
   id: "search-desk", name: "Standing desk", criteria: "Solid frame, 25-50in height range.",
   statuses: [{ label: "New", group: "review" }, { label: "Shortlist", group: "shortlist" }, { label: "Bought", group: "done" },
     { label: "Passed", group: "archived" }, { label: "Sold", group: "archived" }],
-  metrics: [{ field: "Product page", label: "Product page", unit: "", good: null, ok: null }],
+  metrics: [{ field: "Maker page", label: "Maker page", unit: "", good: null, ok: null }],
 };
 
 before(async () => {
@@ -34,7 +34,7 @@ before(async () => {
   layer.registerEnricher("official", async ({ listing, details }) => {
     if (!/Uplift/.test(details.title)) return;
     listing.photos.push({ id: "official-uplift", url: "https://maker.example/uplift.jpg", label: "Official" });
-    listing.fields["Product page"] = "https://maker.example/uplift-v2";
+    listing.fields["Maker page"] = "https://maker.example/uplift-v2";
   });
   layer.registerEnricher("broken", async () => { throw new Error("boom"); });
   api = {
@@ -76,7 +76,7 @@ test("a layer's crawler and enrichers run in the crawl; gone posts are marked so
   const s = await snap();
   const uplift = s.listings.find(l => l.id === "crawl-fk-1");
   assert.deepEqual(uplift.photos.map(p => p.label || ""), ["", "Official"], "official image last, labeled");
-  assert.equal(uplift.fields["Product page"], "https://maker.example/uplift-v2");
+  assert.equal(uplift.fields["Maker page"], "https://maker.example/uplift-v2");
   assert.equal(s.listings.find(l => l.id === "crawl-fk-2").photos.length, 1, "a throwing enricher doesn't stop the save");
 
   assert.equal(body.availability.status, "Sold");

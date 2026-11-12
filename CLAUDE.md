@@ -12,6 +12,14 @@
   change so installed copies pick up the new version.
 
 ## Live data
-The live board's data is in its database, not this repo. Use
-`scripts/remote.mjs` (`SHORTLIST_URL`, `ADMIN_TOKEN`) to triage or update
-listings; changes mirror to Airtable.
+One app holds every shortlist (furniture, rugs, NY Car, the archived
+apartment hunt): https://finds-nate-3636s-projects.vercel.app (Vercel
+project "finds", deployed from this repo). Its data is in its database,
+not this repo. Use `scripts/remote.mjs` or `scripts/send.mjs`
+(`SHORTLIST_URL`, `ADMIN_TOKEN`) to triage, update or send listings.
+There is no Airtable mirror on it.
+
+## Facebook Marketplace
+Never crawled from the server. The Mac's Marketplace plugin and the
+Claude-in-Chrome routine send listings in through `/api/intake`
+(`clients/shortlist.mjs`, `routines/`), at a human pace.
