@@ -331,3 +331,27 @@ dialog.lightbox::backdrop { background: #000; }
 
 /* A card opened from a link (?l=…): a brief outline so it's easy to spot */
 .card.focus { box-shadow: 0 0 0 2px var(--gray-1000); transition: box-shadow .4s; }
+
+/* ---- Shortlists menu ---- */
+.board-btn-unused { display: inline-flex; align-items: baseline; gap: 8px; max-width: 100%; padding: 0; border: 0; background: none; color: var(--gray-1000); font: 600 32px/40px var(--font); letter-spacing: -1.28px; text-align: left; cursor: pointer; }
+.board-btn .chev { font-size: 16px; color: var(--gray-900); letter-spacing: 0; }
+.board-btn .arch { font: 500 12px/20px var(--font); letter-spacing: 0; padding: 0 8px; border-radius: 9999px; background: var(--gray-200); color: var(--gray-900); align-self: center; }
+.lists-sheet .sheet-title { font: 600 16px/24px var(--font); margin: 0; }
+.lists-sheet section { display: grid; gap: 8px; margin-bottom: 20px; }
+.lists-sheet h3 { font: 600 13px/20px var(--font); color: var(--gray-900); margin: 0; text-transform: uppercase; letter-spacing: .4px; }
+.rows.lists { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.rows.lists li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; }
+.rows.lists li.current { background: var(--gray-100); }
+.rows.lists li.off .go b { color: var(--gray-900); }
+.rows.lists .go { flex: 1 1 160px; min-width: 0; padding: 4px 0; border: 0; background: none; text-align: left; font: 400 14px/20px var(--font); color: var(--gray-1000); cursor: pointer; }
+.rows.lists .go .meta { color: var(--gray-900); font-size: 12px; }
+.rows.lists .acts { display: inline-flex; gap: 4px; }
+.btn.small { height: 26px; padding: 0 8px; font-size: 12px; }
+.btn.danger { background: var(--red-900, #c00); color: #fff; box-shadow: none; }
+form.inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; flex: 1 1 200px; }
+form.inline input { flex: 1 1 140px; }
+.archived-lists summary { cursor: pointer; font: 500 13px/20px var(--font); color: var(--gray-900); margin-bottom: 6px; }
+.lists-sheet .unlock { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+/* the ⋯ tab at the end of the shortlist tabs, and the Archived tag in the title */
+.item.more { font-weight: 600; letter-spacing: 1px; color: var(--gray-900); }
+h1 .arch { font: 500 12px/20px var(--font); letter-spacing: 0; padding: 0 8px; border-radius: 9999px; background: var(--gray-200); color: var(--gray-900); vertical-align: middle; }

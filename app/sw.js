@@ -7,7 +7,7 @@
 //   signed URLs still hit the cache later.
 // - The page can post {type: "warm-photos", photos: [{id, url}]} to download
 //   every photo in the background.
-const SHELL = "shortlist-shell-v27";
+const SHELL = "shortlist-shell-v29";
 const PHOTOS = "shortlist-photos-v1";
 const SHELL_FILES = [
   "./", "index.html", "styles.css", "manifest.webmanifest",
@@ -53,7 +53,14 @@ self.addEventListener("fetch", e => {
   if (url.origin !== self.location.origin || url.pathname.includes("/api/")) return;
 
   e.respondWith(caches.open(SHELL).then(async cache => {
-    const hit = await cache.match(e.request, { ignoreSearch: true });
+    // Every page of the app (/furniture/sleeper-sofa…) is index.html.
+    const hit = e.request.mode === "navigate"
+      ? await cache.match("index.html")
+      : await cache.match(e.request, { ignoreSearch: true });
+    if (e.request.mode === "navigate") {
+      const net = fetch(e.request).then(res => { if (res.ok) cache.put("index.html", res.clone()); return res; }).catch(() => hit);
+      return hit || net;
+    }
     const net = fetch(e.request).then(res => { if (res.ok) cache.put(e.request, res.clone()); return res; }).catch(() => hit);
     return hit || net;
   }));

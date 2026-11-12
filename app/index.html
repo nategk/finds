@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<base href="/">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Shortlist</title>
@@ -70,6 +71,12 @@
     <div class="actions"><button class="btn primary" type="button" id="run-crawl" hidden>Run crawl</button><span class="hint" id="crawl-hint"></span></div>
     <ul class="rows" id="sources"></ul>
   </section>
+</dialog>
+
+<dialog id="lists" class="sheet lists-sheet" aria-label="Shortlists">
+  <div class="sheet-head"><h2 class="sheet-title">Shortlists</h2>
+    <form method="dialog"><button class="btn icon" value="close" aria-label="Close">✕</button></form></div>
+  <div class="sheet-body" id="lists-body"></div>
 </dialog>
 
 <dialog id="settings">
