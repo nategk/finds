@@ -3,9 +3,20 @@
 Track and score candidates for any big purchase decision — an apartment, a
 bike, a car, whatever's next — against your own criteria.
 
-This repo is a generic engine. It has no idea what you're shopping for:
-each search (criteria, statuses, listings, photos, sources) lives in your
-own database.
+Everything specific to a search (criteria, statuses, listings, photos,
+sources) lives in your own database; the code is generic. One deployment
+holds all your shortlists, each with its own tab and address
+(`/sleeper-sofa`, `/ny-car`); the ⋯ tab adds, renames and archives them.
+
+What's in the repo besides the app:
+
+| Path | What |
+|---|---|
+| `lib/crawlers/` | Craigslist (any category) and Listings Project, crawled daily |
+| `lib/enrich/manufacturer.js` | For shortlists with a "Product page" metric: the maker's page, official image, new price |
+| `clients/shortlist.mjs` | A no-dependency client for outside integrations (the Mac's Facebook Marketplace plugin) |
+| `scripts/send.mjs`, `scripts/seed.mjs` | Send an export of listings in; seed the furniture searches (`seed/furniture.mjs`) |
+| `routines/` | The Facebook Marketplace integration guide and the Claude-in-Chrome routine |
 
 ## The app
 

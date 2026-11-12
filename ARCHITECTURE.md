@@ -295,6 +295,15 @@ to Blob.
 Criteria, features and the contact template are editable in the UI
 (`PATCH /api/searches/:id`), queued offline like triage.
 
+## Built-in enrichers
+
+`lib/enrich/` registers the enrichers that ship with Shortlist. The
+manufacturer step runs for shortlists whose card metrics include "Product
+page": Claude identifies the exact model from the post and photos, finds
+the maker's own page, and the listing gets the official image (last photo,
+labeled Official), the model, the new price and % of new. Anything short of
+an exact match on the maker's own domain shows as "Likely: …?" with no link.
+
 ## Layers
 
 A layer is a separate deployment (its own repo, Vercel project, database

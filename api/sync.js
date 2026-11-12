@@ -4,6 +4,7 @@
 //   GET  /api/sync   Vercel Cron (daily, vercel.json): Authorization: Bearer $CRON_SECRET
 //   POST /api/sync   by hand:  Authorization: Bearer $ADMIN_TOKEN
 import { ensureWebhook, syncAll } from "../lib/sync.js";
+import { airtableConfig } from "../lib/airtable.js";
 import { json, fail, requireAdmin, isCron } from "../lib/http.js";
 
 async function run() {
@@ -15,6 +16,8 @@ async function run() {
 export async function GET(request) {
   try {
     if (!isCron(request)) requireAdmin(request);
+    // A deployment without Airtable has nothing to sync; the daily cron is fine.
+    if (!airtableConfig()) return json({ ok: true, skipped: "Airtable isn't configured." });
     return await run();
   } catch (e) {
     return fail(e);
