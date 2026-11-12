@@ -13,8 +13,10 @@
 
 ## Live data
 One app holds every shortlist (furniture, rugs, NY Car, the archived
-apartment hunt): https://finds-nate-3636s-projects.vercel.app (Vercel
-project "finds", deployed from this repo). Its data is in its database,
+apartment hunt): https://finds-nate-3636s-projects.vercel.app (the Vercel
+project "shortlist", deployed from this repo; the address predates its
+rename and keeps working). Photos all live in its one Blob store; the old
+apartment project is paused as "shortlist-archived". Its data is in its database,
 not this repo. Use `scripts/remote.mjs` or `scripts/send.mjs`
 (`SHORTLIST_URL`, `ADMIN_TOKEN`) to triage, update or send listings.
 There is no Airtable mirror on it.
