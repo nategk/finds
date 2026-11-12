@@ -276,6 +276,16 @@ through steps 3–6 above under a source of that name, created on first use.
 Photo URLs from such sites often expire within hours, so they're copied to
 Blob immediately.
 
+Every intake reply carries **board links**: `?s=<search id>` opens that
+item's tab, `?l=<listing id>` opens the listing's item and status tab,
+expanded, scrolled to and outlined. `add` returns one per item
+(`listings: [{key, id, result, board}]`), so an integration can point at
+the board instead of keeping its own copy. `GET /api/intake?source=…`
+(public, like the snapshot) is the plan for an integration: each active
+search's saved links for that source, how many listings it has sent, and
+its board link. Photos may be https or `data:image` URLs; both are copied
+to Blob.
+
 Criteria, features and the contact template are editable in the UI
 (`PATCH /api/searches/:id`), queued offline like triage.
 

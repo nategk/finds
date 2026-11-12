@@ -328,3 +328,6 @@ dialog.lightbox::backdrop { background: #000; }
 
 /* Single-line field in the criteria sheet */
 .sheet-body input.line { width: 100%; box-sizing: border-box; margin-top: 8px; }
+
+/* A card opened from a link (?l=…): a brief outline so it's easy to spot */
+.card.focus { box-shadow: 0 0 0 2px var(--gray-1000); transition: box-shadow .4s; }
