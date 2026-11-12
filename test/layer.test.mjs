@@ -126,6 +126,31 @@ test("intake: admin only, screens then adds, skips what it has seen", { skip }, 
   assert.deepEqual(body.keep, []);
 });
 
+test("when Claude can't screen, the crawl still adds listings, unscreened, and says why", { skip }, async () => {
+  await db().query("update searches set last_crawl_at = null");
+  await db().query("delete from listings where id like 'crawl-fk-%'");
+  await db().query("update sources set seen = '[]'::jsonb where id = 'src-fake'");
+  process.env.ANTHROPIC_API_KEY = "sk-test-dummy";
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => String(url).includes("anthropic.com")
+    ? new Response(JSON.stringify({ type: "error", error: { type: "invalid_request_error", message: "Your credit balance is too low to access the Anthropic API." } }), { status: 400, headers: { "content-type": "application/json" } })
+    : realFetch(url, init);
+  try {
+    const r = await api.crawl.POST(req("/api/crawl", { method: "POST", body: JSON.stringify({ searchId: "search-desk" }) }));
+    const body = await r.json();
+    assert.equal(r.status, 200, JSON.stringify(body));
+    assert.equal(body.added, 2);
+    assert.match(body.results[0].result, /not screened \(Anthropic credit balance too low\)/);
+    const s = await snap();
+    assert.match(s.listings.find(l => l.id === "crawl-fk-1").summary, /Not scored yet \(Anthropic credit balance too low\)/);
+    const src = (await db().query("select seen from sources where id = 'src-fake'")).rows[0].seen;
+    assert.deepEqual([...src].sort(), ["fk-1", "fk-2"], "only what was added is marked seen");
+  } finally {
+    globalThis.fetch = realFetch;
+    delete process.env.ANTHROPIC_API_KEY;
+  }
+});
+
 test("rescore: admin only, needs scoring", { skip }, async () => {
   const rescore = await import("../api/admin/rescore.js");
   const post = (headers) => rescore.POST(req("/api/admin/rescore", { method: "POST", headers, body: JSON.stringify({ searchId: "search-desk" }) }));

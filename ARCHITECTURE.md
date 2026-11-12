@@ -246,7 +246,12 @@ source with a `crawler` (`lib/crawlers/`: `craigslist` (any category),
    retried next run. The UI reports saved / failed / left.
 
 One crawl per search per 10 minutes (the endpoint is public). Scoring needs
-`ANTHROPIC_API_KEY`; without it listings are added unscored. Sites that
+`ANTHROPIC_API_KEY`; without it listings are added unscored. A crawl never
+stops because Claude can't answer (no key, no credit, an outage): the first
+12 new posts per source go in unscreened, the source's result says "not
+screened (why)", each card's summary says why it isn't scored, and the posts
+left out aren't marked seen, so a later run can still screen them. Re-score
+(below) scores the backlog once Claude is back. Sites that
 refuse automated access are recorded as `blocked`, never worked around.
 
 **Re-scoring.** `POST /api/admin/rescore {searchId, all?}` (admin token)
