@@ -18,6 +18,34 @@ let view = { searchId: pref.get("search", ""), tab: pref.get("tab", "all") };
 let warmedKey = "";
 const expanded = new Set();   // cards whose summary/description is open
 
+// Links into the board: ?s=<search id> opens that item's tab; ?l=<listing
+// id> opens the listing's item and status tab, scrolls to its card and
+// highlights it. Integrations reply with these (api/intake `board`). The
+// link is applied once the listing is loaded, then dropped from the address.
+const link = (() => {
+  const q = new URLSearchParams(location.search);
+  return { search: q.get("s") || "", listing: q.get("l") || "" };
+})();
+let focus = { id: "", until: 0, timer: null };
+function applyLink(state) {
+  if (!link.search && !link.listing) return;
+  if (link.listing) {
+    const l = state.listings.find(x => x.id === link.listing);
+    if (!l) return;   // not loaded yet: try again after the next render
+    const s = state.searches.find(x => (l.searchIds || []).includes(x.id));
+    if (s) view.searchId = s.id;
+    view.tab = groupOf(s, l.status) === "archived" ? "archived" : "all";
+    expanded.add(l.id);
+    focus = { id: l.id, until: Date.now() + 3000, timer: null };
+  } else if (state.searches.some(x => x.id === link.search)) {
+    view.searchId = link.search;
+    view.tab = "all";
+  } else return;
+  pref.set("search", view.searchId); pref.set("tab", view.tab);
+  link.search = link.listing = "";
+  history.replaceState(null, "", location.pathname);
+}
+
 async function boot() {
   if (!conn) { conn = await loadConnection(); adapter = createAdapter(conn); }
   store = await new Store(adapter, "shortlist:" + connectionKey(conn)).open();
@@ -53,6 +81,7 @@ function listingsFor(state, search) {
 
 function render() {
   const { state, status } = store;
+  applyLink(state);
   const search = currentSearch(state);
   const d = adapter.describe();
   const listings = listingsFor(state, search);
@@ -106,6 +135,24 @@ function render() {
       : `<div class="empty">${store.hasData ? "Nothing in this tab." : status.error ? "Couldn't load: " + ui.esc(status.error) : "Loading listings…"}</div>`;
   });
   fitSummaries();
+  // Renders right after a link (cache, then the fresh pull) replace the
+  // cards, so the linked one is found and centered again on each.
+  if (focus.id && Date.now() < focus.until) {
+    const card = document.querySelector(`.card[data-id="${CSS.escape(focus.id)}"]`);
+    if (card) card.classList.add("focus");
+    // Photos and fonts loading above it shift it down; keep it centered
+    // until things settle, unless the user starts scrolling.
+    if (!focus.timer) {
+      const stop = () => { clearInterval(focus.timer); focus.timer = null; removeEventListener("touchstart", stop); removeEventListener("wheel", stop); };
+      addEventListener("touchstart", stop, { once: true, passive: true });
+      addEventListener("wheel", stop, { once: true, passive: true });
+      focus.timer = setInterval(() => {
+        const c = document.querySelector(`.card[data-id="${CSS.escape(focus.id)}"]`);
+        if (Date.now() >= focus.until) { stop(); c?.classList.remove("focus"); return; }
+        if (c) { c.classList.add("focus"); const r = c.getBoundingClientRect(); if (Math.abs(r.top + r.height / 2 - innerHeight / 2) > 40) c.scrollIntoView({ block: "center" }); }
+      }, 150);
+    }
+  }
 
   // Criteria, contact template and sources live in the sheet, opened from the database group.
   if (search) {

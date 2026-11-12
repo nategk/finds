@@ -151,6 +151,30 @@ test("when Claude can't screen, the crawl still adds listings, unscreened, and s
   }
 });
 
+test("intake: replies with board links, takes data: photos, and publishes a plan", { skip }, async () => {
+  const post = body => api.intake.POST(req("/api/intake", { method: "POST", headers: auth, body: JSON.stringify(body) }));
+  const png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==";
+  const r = await post({ searchId: "search-desk", source: "Facebook Marketplace", step: "add", items: [
+    { key: "fb-9", url: "https://www.facebook.com/marketplace/item/9/", title: "Walnut desk", description: "A long walnut desk top, frame included, pickup Brooklyn, works great, barely used, no scratches at all.", photos: [png, "ftp://nope"] },
+    { key: "fb-1", url: "https://www.facebook.com/marketplace/item/1/", title: "again" },
+  ] });
+  const body = await r.json();
+  assert.equal(r.status, 200, JSON.stringify(body));
+  assert.equal(body.board, "http://localhost/?s=search-desk");
+  assert.deepEqual(body.listings.map(x => [x.key, x.id, x.result, x.board]).sort(), [
+    ["fb-1", "crawl-fb-1", "known", "http://localhost/?l=crawl-fb-1"],
+    ["fb-9", "crawl-fb-9", "added", "http://localhost/?l=crawl-fb-9"],
+  ]);
+  const s = await snap();
+  assert.deepEqual(s.listings.find(l => l.id === "crawl-fb-9").photos.map(p => p.url.slice(0, 15)), ["data:image/png;"], "data: kept, ftp dropped");
+
+  const plan = await (await api.intake.GET(req("/api/intake?source=facebook%20marketplace"))).json();
+  const desk = plan.searches.find(x => x.searchId === "search-desk");
+  assert.equal(desk.board, "http://localhost/?s=search-desk");
+  assert.ok(desk.listings >= 2);
+  assert.equal((await api.intake.GET(req("/api/intake"))).status, 400);
+});
+
 test("rescore: admin only, needs scoring", { skip }, async () => {
   const rescore = await import("../api/admin/rescore.js");
   const post = (headers) => rescore.POST(req("/api/admin/rescore", { method: "POST", headers, body: JSON.stringify({ searchId: "search-desk" }) }));
