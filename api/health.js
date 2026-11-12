@@ -5,6 +5,7 @@ import * as postgres from "../lib/postgres.js";
 import { status as syncStatus } from "../lib/sync.js";
 import { databaseUrl, blobToken } from "../lib/db.js";
 import { json, fail } from "../lib/http.js";
+import { refinementEnabled } from "../lib/score.js";
 
 export async function GET() {
   try {
@@ -16,7 +17,8 @@ export async function GET() {
         photoStorage: !!blobToken(),
         adminToken: (process.env.ADMIN_TOKEN || "").length >= 16,
         airtable: !!(process.env.AIRTABLE_TOKEN && process.env.AIRTABLE_BASE_ID),
-        scoring: !!process.env.ANTHROPIC_API_KEY,
+        scoring: !!process.env.ANTHROPIC_API_KEY,          // a key is set
+        claudeRefinement: refinementEnabled(),             // and CLAUDE_REFINEMENT isn't off
       },
       airtableSync: databaseUrl() ? await syncStatus().catch(e => ({ error: e.message })) : null,
     });

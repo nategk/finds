@@ -212,13 +212,51 @@ test("rehost: finds photos in another Blob store; admin only; needs a store", { 
   }
 });
 
+test("CLAUDE_REFINEMENT=off: a key is set but nothing calls Claude; posts still come in, and it says so", { skip }, async () => {
+  await db().query("update searches set last_crawl_at = null");
+  await db().query("delete from listings where id like 'crawl-fk-%'");
+  await db().query("update sources set seen = '[]'::jsonb where id = 'src-fake'");
+  process.env.ANTHROPIC_API_KEY = "sk-test-dummy";
+  process.env.CLAUDE_REFINEMENT = "Off";
+  const realFetch = globalThis.fetch;
+  const calls = [];
+  globalThis.fetch = async (url, init) => { if (String(url).includes("anthropic.com")) calls.push(String(url)); return realFetch(url, init); };
+  try {
+    const health = await (await (await import("../api/health.js")).GET()).json();
+    assert.equal(health.setup.scoring, true, "a key is set");
+    assert.equal(health.setup.claudeRefinement, false);
+
+    const r = await api.crawl.POST(req("/api/crawl", { method: "POST", body: JSON.stringify({ searchId: "search-desk" }) }));
+    const body = await r.json();
+    assert.equal(r.status, 200, JSON.stringify(body));
+    assert.equal(body.added, 2);
+    assert.equal(body.scored, false);
+    assert.match(body.results[0].result, /not screened \(Claude refinement is off\)/);
+    assert.deepEqual(calls, [], "no request to Anthropic");
+    const s = await snap();
+    const uplift = s.listings.find(l => l.id === "crawl-fk-1");
+    assert.match(uplift.summary, /Not scored \(Claude refinement is off\)/);
+
+    const rescore = await (await import("../api/admin/rescore.js")).POST(req("/api/admin/rescore", { method: "POST", headers: auth, body: JSON.stringify({ searchId: "search-desk" }) }));
+    assert.equal(rescore.status, 400);
+    assert.match((await rescore.json()).error, /Claude refinement is off/);
+
+    process.env.CLAUDE_REFINEMENT = "on";
+    assert.equal((await (await (await import("../api/health.js")).GET()).json()).setup.claudeRefinement, true);
+  } finally {
+    globalThis.fetch = realFetch;
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.CLAUDE_REFINEMENT;
+  }
+});
+
 test("rescore: admin only, needs scoring", { skip }, async () => {
   const rescore = await import("../api/admin/rescore.js");
   const post = (headers) => rescore.POST(req("/api/admin/rescore", { method: "POST", headers, body: JSON.stringify({ searchId: "search-desk" }) }));
   assert.equal((await post({})).status, 401);
   const r = await post(auth);
   assert.equal(r.status, 400);
-  assert.match((await r.json()).error, /ANTHROPIC_API_KEY/);
+  assert.match((await r.json()).error, /Claude refinement is unavailable \(no ANTHROPIC_API_KEY\)/);
 });
 
 test("daily crawl: cron runs only where DAILY_CRAWL=1; by hand needs the admin token", { skip }, async () => {
