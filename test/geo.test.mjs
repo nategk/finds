@@ -102,4 +102,6 @@ test("distance, directions and boards", () => {
   assert.match(directionsUrl(search, { fields: { lat: 40.671, lon: -73.9814 } }), /^https:\/\/www\.google\.com\/maps\/dir\/\?api=1&travelmode=bicycling&origin=W%2072nd/);
   assert.deepEqual(boards([{ id: "a", collection: "NY" }, { id: "x", name: "Lone" }, { id: "b", collection: "NY" }])
     .map(b => [b.name, b.searches.map(s => s.id)]), [["NY", ["a", "b"]], ["Lone", ["x"]]]);
+  assert.deepEqual(boards([{ id: "a", collection: "NY" }, { id: "old", collection: "NY", state: "Archived" }, { id: "gone", state: "archived" }])
+    .map(b => [b.name, b.searches.map(s => s.id)]), [["NY", ["a"]]], "archived searches have no tab");
 });

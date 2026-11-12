@@ -166,11 +166,17 @@ export function directionsUrl(search, listing) {
   return "https://www.google.com/maps/dir/?api=1&travelmode=bicycling&origin=" + encodeURIComponent(search.home) + "&destination=" + encodeURIComponent(`${f.lat},${f.lon}`);
 }
 
-// Boards: searches grouped by collection, in their own order. A search with
-// no collection is a board of its own.
+// A search set to State "Archived" is retired: no tab, no daily crawl
+// (lib/postgres.js searchesToCrawl). Its listings stay in the database, and
+// setting the state back brings the tab back.
+export const archived = s => /^archived$/i.test(String((s && s.state) || "").trim());
+
+// Boards: searches grouped by collection, in their own order, leaving out
+// archived searches. A search with no collection is a board of its own.
 export function boards(searches) {
   const out = [];
   for (const s of searches) {
+    if (archived(s)) continue;
     const key = s.collection ? "c:" + s.collection : "s:" + s.id;
     let b = out.find(x => x.key === key);
     if (!b) out.push(b = { key, name: s.collection || s.name, searches: [] });

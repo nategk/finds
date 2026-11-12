@@ -2,7 +2,7 @@
 // store, render, and route UI events to store writes.
 import { ADAPTERS, loadConnection, saveConnection, createAdapter, connectionKey } from "./adapters/index.js";
 import { Store } from "./store.js";
-import { fit, parseFeatures, featuresText, groupOf, rankable, rerank, boards } from "./model.js";
+import { fit, parseFeatures, featuresText, groupOf, rankable, rerank, boards, archived } from "./model.js";
 import * as ui from "./ui.js";
 
 const $ = s => document.querySelector(s);
@@ -55,8 +55,9 @@ async function boot() {
 }
 
 function currentSearch(state) {
-  const active = state.searches.filter(s => s.state !== "Done");
-  return state.searches.find(s => s.id === view.searchId) || active[0] || state.searches[0] || null;
+  const shown = state.searches.filter(s => !archived(s));
+  const active = shown.filter(s => s.state !== "Done");
+  return shown.find(s => s.id === view.searchId) || active[0] || shown[0] || null;
 }
 
 // Ranked listings in a search (shortlist / in progress, with a rank).
