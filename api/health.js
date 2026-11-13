@@ -3,7 +3,8 @@
 // yes/no, never values.
 import * as postgres from "../lib/postgres.js";
 import { status as syncStatus } from "../lib/sync.js";
-import { databaseUrl, blobToken } from "../lib/db.js";
+import { databaseUrl } from "../lib/db.js";
+import { storageBackend } from "../lib/photos.js";
 import { json, fail } from "../lib/http.js";
 import { refinementEnabled } from "../lib/score.js";
 
@@ -14,7 +15,7 @@ export async function GET() {
       ...postgres.describe(),
       setup: {
         database: !!databaseUrl(),
-        photoStorage: !!blobToken(),
+        photoStorage: storageBackend() || false,
         adminToken: (process.env.ADMIN_TOKEN || "").length >= 16,
         airtable: !!(process.env.AIRTABLE_TOKEN && process.env.AIRTABLE_BASE_ID),
         scoring: !!process.env.ANTHROPIC_API_KEY,          // a key is set
