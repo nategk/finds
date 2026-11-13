@@ -279,3 +279,48 @@ test("daily crawl: cron runs only where DAILY_CRAWL=1; by hand needs the admin t
     delete process.env.CRON_SECRET;
   }
 });
+
+test("R2 photo storage: signed PUT, public URL, hard monthly write cap", { skip }, async () => {
+  const photos = await import("../lib/photos.js");
+  const saved = { ...process.env };
+  Object.assign(process.env, { R2_ACCOUNT_ID: "acct", R2_ACCESS_KEY_ID: "AKID", R2_SECRET_ACCESS_KEY: "secret", R2_BUCKET: "bkt", R2_PUBLIC_URL: "https://pub.example.dev/" });
+  delete process.env.BLOB_READ_WRITE_TOKEN;
+  const realFetch = globalThis.fetch;
+  const puts = [];
+  globalThis.fetch = async (url, init = {}) => {
+    if (init.method === "PUT") { puts.push({ url, headers: init.headers }); return new Response("", { status: 200 }); }
+    return new Response("img", { status: 200, headers: { "content-type": "image/png" } });
+  };
+  try {
+    assert.equal(photos.storageBackend(), "r2");
+    assert.ok(photos.isHosted("https://pub.example.dev/photos/a/b.jpg"));
+    await db().query("delete from storage_usage");
+    const l = { id: "r2 x", photos: [{ id: "p1", url: "https://images.craigslist.org/a.jpg" }, { id: "p2", url: "https://pub.example.dev/photos/z.jpg" }] };
+    const r = await photos.copyPhotosToBlob([l]);
+    assert.equal(r.copied, 1);
+    assert.equal(l.photos[0].url, "https://pub.example.dev/photos/r2_x/p1.png");
+    assert.equal(l.photos[0].original, "https://images.craigslist.org/a.jpg");
+    assert.equal(puts[0].url, "https://acct.r2.cloudflarestorage.com/bkt/photos/r2_x/p1.png");
+    assert.match(puts[0].headers.authorization, /^AWS4-HMAC-SHA256 Credential=AKID\/\d{8}\/auto\/s3\/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=[0-9a-f]{64}$/);
+
+    // A suspended Vercel Blob photo is re-fetched from its original source.
+    const m = { id: "mv", photos: [{ id: "q", url: "https://abc.public.blob.vercel-storage.com/photos/q.jpg", original: "https://images.craigslist.org/q.jpg" }] };
+    assert.equal((await photos.copyPhotosToBlob([m], { foreign: true })).copied, 1);
+    assert.equal(m.photos[0].url, "https://pub.example.dev/photos/mv/q.png");
+
+    // The cap is hard: once the month's writes are used up, nothing more is written.
+    process.env.R2_MONTHLY_PUTS = "3";
+    const n = { id: "cap", photos: [1, 2, 3, 4].map(i => ({ id: "c" + i, url: "https://images.craigslist.org/" + i + ".jpg" })) };
+    const before = puts.length;
+    const c = await photos.copyPhotosToBlob([n]);
+    assert.equal(c.copied, 1, "2 of the 3 writes were already used");
+    assert.equal(c.capped, true);
+    assert.equal(puts.length - before, 1);
+    assert.equal(n.photos.filter(p => photos.isHosted(p.url)).length, 1);
+  } finally {
+    globalThis.fetch = realFetch;
+    for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k];
+    Object.assign(process.env, saved);
+    await db().query("delete from storage_usage");
+  }
+});
