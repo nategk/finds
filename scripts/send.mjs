@@ -1,7 +1,7 @@
 // Sends listings from anywhere (the Mac's Marketplace integration, an old
-// export) into Shortlist, which stays the one place they live.
+// export) into Finds, which stays the one place they live.
 //
-//   SHORTLIST_URL=https://finds-nate-3636s-projects.vercel.app ADMIN_TOKEN=… \
+//   FINDS_URL=https://finds-nate-3636s-projects.vercel.app ADMIN_TOKEN=… \
 //     node scripts/send.mjs <file.json> [more.json…]
 //
 // Each file is an import snapshot: { searches?, sources?, listings }.
@@ -17,11 +17,11 @@
 // file) are sent once. One POST per search keeps each request small.
 import { readFileSync } from "node:fs";
 
-const base = (process.env.SHORTLIST_URL || process.env.FINDS_URL || "").replace(/\/$/, "");
+const base = (process.env.FINDS_URL || process.env.SHORTLIST_URL || "").replace(/\/$/, "");
 const token = process.env.ADMIN_TOKEN || process.env.FINDS_ADMIN_TOKEN || "";
 const files = process.argv.slice(2);
 if (!base || !token || !files.length) {
-  console.error("Usage: SHORTLIST_URL=… ADMIN_TOKEN=… node scripts/send.mjs <file.json>…");
+  console.error("Usage: FINDS_URL=… ADMIN_TOKEN=… node scripts/send.mjs <file.json>…");
   process.exit(1);
 }
 

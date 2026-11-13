@@ -1,15 +1,15 @@
-// Work on a deployed Shortlist's database from a terminal.
+// Work on a deployed Finds database from a terminal.
 //   node scripts/remote.mjs pull [file]    save the live snapshot (public read)
 //   node scripts/remote.mjs push <file>    upsert a snapshot, keeping triage
 //                                          (status/notes/features) as it is live
 //   node scripts/remote.mjs set <listingId> status=Contacted [notes=...]
 //                                          triage one listing (open endpoint)
-// Env: SHORTLIST_URL (e.g. https://your-app.vercel.app), ADMIN_TOKEN for push.
+// Env: FINDS_URL (SHORTLIST_URL still works) (e.g. https://your-app.vercel.app), ADMIN_TOKEN for push.
 import { readFile, writeFile } from "node:fs/promises";
 
 const [cmd, file] = process.argv.slice(2);
-const base = (process.env.SHORTLIST_URL || "").replace(/\/$/, "");
-if (!base) { console.error("Set SHORTLIST_URL."); process.exit(1); }
+const base = (process.env.FINDS_URL || process.env.SHORTLIST_URL || "").replace(/\/$/, "");
+if (!base) { console.error("Set FINDS_URL."); process.exit(1); }
 
 if (cmd === "pull") {
   const res = await fetch(base + "/api/snapshot");

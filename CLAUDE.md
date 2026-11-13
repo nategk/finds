@@ -1,4 +1,4 @@
-# Working on Shortlist
+# Working on Finds
 
 ## Shipping changes
 - Small changes (UI tweaks, copy, styling, small fixes): merge to `main`
@@ -15,13 +15,13 @@
 One app holds every shortlist (furniture, rugs, NY Car, the archived
 apartment hunt): https://finds-nate-3636s-projects.vercel.app (the Vercel
 project "shortlist", deployed from this repo; the address predates its
-rename and keeps working). Photos all live in its one Blob store; the old
+rename and keeps working). Photos live in Cloudflare R2 (Vercel Blob as fallback; see lib/photos.js); the old
 apartment project is paused as "shortlist-archived". Its data is in its database,
 not this repo. Use `scripts/remote.mjs` or `scripts/send.mjs`
-(`SHORTLIST_URL`, `ADMIN_TOKEN`) to triage, update or send listings.
+(`FINDS_URL`, `ADMIN_TOKEN`) to triage, update or send listings.
 There is no Airtable mirror on it.
 
 ## Facebook Marketplace
 Never crawled from the server. The Mac's Marketplace plugin and the
 Claude-in-Chrome routine send listings in through `/api/intake`
-(`clients/shortlist.mjs`, `routines/`), at a human pace.
+(`clients/finds.mjs`, `routines/`), at a human pace.

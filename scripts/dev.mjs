@@ -53,4 +53,4 @@ createServer(async (req, res) => {
     console.error(e);
     res.writeHead(500).end("Server error");
   }
-}).listen(PORT, () => console.log(`Shortlist dev server on http://localhost:${PORT} (${process.env.DATABASE_URL ? "postgres" : "no DATABASE_URL: the API will error"})`));
+}).listen(PORT, () => console.log(`Finds dev server on http://localhost:${PORT} (${process.env.DATABASE_URL ? "postgres" : "no DATABASE_URL: the API will error"})`));

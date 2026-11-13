@@ -1,6 +1,6 @@
 {
-  "name": "Shortlist",
-  "short_name": "Shortlist",
+  "name": "Finds",
+  "short_name": "Finds",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

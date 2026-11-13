@@ -118,7 +118,7 @@ function render() {
   const tabItems = state.searches.filter(s => !archived(s) || s === search);
   if (search) {
     $("#title-wrap").innerHTML = ui.esc(search.name) + (archived(search) ? ` <span class="arch">Archived</span>` : "");
-    document.title = search.name + " · " + (document.querySelector(".brand")?.textContent || "Shortlist");
+    document.title = search.name + " · " + (document.querySelector(".brand")?.textContent || "Finds");
   } else {
     $("#title-wrap").textContent = store.hasData ? "No shortlists yet" : status.syncing ? "Loading…" : "No shortlists yet";
   }
