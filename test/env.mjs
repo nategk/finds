@@ -4,7 +4,7 @@
 //   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
 const url = process.env.TEST_DATABASE_URL || "";
 for (const k of Object.keys(process.env)) {
-  if (/(DATABASE_URL|POSTGRES_URL|READ_WRITE_TOKEN)$/.test(k) || /^(AIRTABLE_|BLOB_|ANTHROPIC_API_KEY|CRON_SECRET|SHORTLIST_URL)/.test(k)) delete process.env[k];
+  if (/(DATABASE_URL|POSTGRES_URL|READ_WRITE_TOKEN)$/.test(k) || /^(AIRTABLE_|BLOB_|ANTHROPIC_API_KEY|CRON_SECRET|SHORTLIST_URL|FINDS_URL)/.test(k)) delete process.env[k];
 }
 if (url && !/@(localhost|127\.0\.0\.1)[:/]/.test(url) && process.env.ALLOW_REMOTE_TEST_DB !== "1") {
   throw new Error("TEST_DATABASE_URL must point at localhost (tests drop tables). Set ALLOW_REMOTE_TEST_DB=1 to override.");

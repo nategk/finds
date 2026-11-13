@@ -171,7 +171,7 @@ export function directionsUrl(search, listing) {
 // setting the state back brings the tab back.
 export const archived = s => /^archived$/i.test(String((s && s.state) || "").trim());
 
-// Boards (shortlists): searches grouped by collection, in their own order.
+// Boards (finds): searches grouped by collection, in their own order.
 // A search with no collection is a board of its own. Archived searches are
 // left out unless `all`; a board whose items are all archived is archived.
 export function boards(searches, { all = false } = {}) {
@@ -187,7 +187,7 @@ export function boards(searches, { all = false } = {}) {
   return out;
 }
 
-// URL slugs: /<shortlist>/<item>, from their names ("Sleeper sofa" ->
+// URL slugs: /<find>/<item>, from their names ("Sleeper sofa" ->
 // sleeper-sofa), so renaming one renames its address.
 export const slug = s => String(s || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
   .replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");

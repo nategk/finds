@@ -26,13 +26,13 @@ test("only the maker's own domain counts", () => {
   assert.ok(!onDomain("not a url", "hermanmiller.com"));
 });
 
-test("runs only for shortlists with a Product page metric; without a key it only clears guesses", async () => {
+test("runs only for finds with a Product page metric; without a key it only clears guesses", async () => {
   assert.deepEqual(getEnrichers().map(e => e.name), ["manufacturer"]);
   const guessed = () => ({ price: 400, photos: [{ id: "a", url: "https://x/a.jpg" }], fields: { [FIELDS.page]: "https://made-up.example", Other: 1 } });
 
   const car = guessed();
   await manufacturer({ search: { metrics: [{ field: "Mileage" }] }, listing: car, details: {} });
-  assert.equal(car.fields[FIELDS.page], "https://made-up.example", "not a things-you-buy shortlist: untouched");
+  assert.equal(car.fields[FIELDS.page], "https://made-up.example", "not a things-you-buy find: untouched");
 
   const sofa = guessed();
   await manufacturer({ search: { metrics: [{ field: FIELDS.page }] }, listing: sofa, details: { title: "Aeron" } });

@@ -2,15 +2,15 @@
 // already there are left alone (your edits in the app win)
 // unless you pass --force, which overwrites them with the seed's version.
 // Listings are never touched.
-//   SHORTLIST_URL=https://finds-nate-3636s-projects.vercel.app ADMIN_TOKEN=… npm run seed
+//   FINDS_URL=https://finds-nate-3636s-projects.vercel.app ADMIN_TOKEN=… npm run seed
 //   … npm run seed -- --dry      print what would be sent
 //   … npm run seed -- --force    overwrite existing searches and sources
 import { snapshot } from "../seed/furniture.mjs";
 
-const base = (process.env.SHORTLIST_URL || "").replace(/\/$/, "");
+const base = (process.env.FINDS_URL || process.env.SHORTLIST_URL || "").replace(/\/$/, "");
 const token = process.env.ADMIN_TOKEN || "";
 const dry = process.argv.includes("--dry"), force = process.argv.includes("--force");
-if (!base || (!token && !dry)) { console.error("Set SHORTLIST_URL and ADMIN_TOKEN."); process.exit(1); }
+if (!base || (!token && !dry)) { console.error("Set FINDS_URL and ADMIN_TOKEN."); process.exit(1); }
 
 const live = await (await fetch(base + "/api/snapshot")).json();
 const have = new Set([...(live.searches || []), ...(live.sources || [])].map(x => x.id));

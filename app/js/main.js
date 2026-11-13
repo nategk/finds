@@ -7,8 +7,9 @@ import * as ui from "./ui.js";
 
 const $ = s => document.querySelector(s);
 const pref = {
-  get(k, d) { try { return localStorage.getItem("shortlist." + k) ?? d; } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem("shortlist." + k, v); } catch (e) {} },
+  // Saved as finds.<key>; values saved under the earlier name (shortlist.<key>) are still read.
+  get(k, d) { try { return localStorage.getItem("finds." + k) ?? localStorage.getItem("shortlist." + k) ?? d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("finds." + k, v); } catch (e) {} },
 };
 
 let conn = null;
@@ -28,7 +29,7 @@ const link = (() => {
 })();
 let focus = { id: "", until: 0, timer: null };
 
-// Addresses: every shortlist has its own, /<name> (/sleeper-sofa). Opening
+// Addresses: every find has its own, /<name> (/sleeper-sofa). Opening
 // one picks it; moving between them updates the address (Back works).
 let route = pathRoute();
 let lastPath = "";
@@ -66,14 +67,14 @@ function applyLink(state) {
 
 async function boot() {
   if (!conn) { conn = await loadConnection(); adapter = createAdapter(conn); }
-  store = await new Store(adapter, "shortlist:" + connectionKey(conn)).open();
+  store = await new Store(adapter, "shortlist:" + connectionKey(conn) /* internal name, kept so offline data survives the rename */).open();
   store.subscribe(render);
   render();
   store.pull().then(() => store.flush());
 }
 
 // The search on screen: the one picked (archived ones too, when opened from
-// the Shortlists menu), else the first active one.
+// the Finds menu), else the first active one.
 function currentSearch(state) {
   const shown = state.searches.filter(s => !archived(s));
   const active = shown.filter(s => s.state !== "Done");
@@ -113,21 +114,21 @@ function render() {
   $("#source-kind").textContent = d.kind + (d.writable ? "" : " · read-only");
   $("#source-dot").className = "dot " + (status.syncing ? "busy" : status.error ? "bad" : !status.online ? "warn" : status.lastPulled ? "ok" : "");
 
-  // Header: one tab per shortlist (archived ones only when open), and the
-  // ⋯ button that opens the Shortlists menu (add, rename, archive).
+  // Header: one tab per find (archived ones only when open), and the
+  // ⋯ button that opens the Finds menu (add, rename, archive).
   const tabItems = state.searches.filter(s => !archived(s) || s === search);
   if (search) {
     $("#title-wrap").innerHTML = ui.esc(search.name) + (archived(search) ? ` <span class="arch">Archived</span>` : "");
     document.title = search.name + " · " + (document.querySelector(".brand")?.textContent || "Finds");
   } else {
-    $("#title-wrap").textContent = store.hasData ? "No shortlists yet" : status.syncing ? "Loading…" : "No shortlists yet";
+    $("#title-wrap").textContent = store.hasData ? "No finds yet" : status.syncing ? "Loading…" : "No finds yet";
   }
   const openCount = s => listingsFor(state, s).filter(l => groupOf(s, l.status) !== "archived").length;
   $("#items").hidden = !store.hasData && !state.searches.length;
-  $("#items").innerHTML = ui.items(tabItems, search || {}, openCount) + `<button class="item more" type="button" id="board-btn" aria-label="Shortlists: add, rename, archive">⋯</button>`;
-  // Refresh the open Shortlists menu, unless an edit is in progress there.
+  $("#items").innerHTML = ui.items(tabItems, search || {}, openCount) + `<button class="item more" type="button" id="board-btn" aria-label="Finds: add, rename, archive">⋯</button>`;
+  // Refresh the open Finds menu, unless an edit is in progress there.
   if ($("#lists").open && !$("#lists form.rename, #lists form.confirm") && !$("#lists").contains(document.activeElement?.closest("form"))) renderLists();
-  // Keep the address on the open shortlist / item. A new place is a new
+  // Keep the address on the open find / item. A new place is a new
   // history entry; the first render just corrects the address.
   if (search && !route && !link.search && !link.listing) {
     const path = pathFor(search);
@@ -190,7 +191,7 @@ function render() {
     fillDoc("#home", search.home);
     $("#home-hint").textContent = !search.home ? "Set it to see how far each listing is, with directions."
       : search.homeGeo ? `Found: ${search.homeGeo.label} (${search.homeGeo.fidelity})` : "Locating…";
-    // Shortlists in the same collection share one home location.
+    // Finds in the same collection share one home location.
     const sharing = state.searches.filter(x => x.collection && x.collection === search.collection && x.id !== search.id).map(x => x.name);
     $("#home-shared").hidden = !sharing.length;
     $("#home-shared").textContent = sharing.length ? "; also used by " + sharing.join(", ") : "";
@@ -496,12 +497,12 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// ---- Shortlists menu: jump between shortlists; add, rename, archive,
+// ---- Finds menu: jump between finds; add, rename, archive,
 // delete them and their items. Editing goes to /api/admin/boards with the
 // admin token, kept on this device only. ----
 const adminToken = {
-  get() { try { return localStorage.getItem("shortlist.admin") || ""; } catch (e) { return ""; } },
-  set(v) { try { v ? localStorage.setItem("shortlist.admin", v) : localStorage.removeItem("shortlist.admin"); } catch (e) {} },
+  get() { try { return localStorage.getItem("finds.admin") || localStorage.getItem("shortlist.admin") || ""; } catch (e) { return ""; } },
+  set(v) { try { if (v) localStorage.setItem("finds.admin", v); else { localStorage.removeItem("finds.admin"); localStorage.removeItem("shortlist.admin"); } } catch (e) {} },
 };
 let listsMsg = "";   // the menu's status line ("Saving…", "Renamed.", an error)
 function renderLists() {

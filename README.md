@@ -5,7 +5,7 @@ bike, a car, whatever's next — against your own criteria.
 
 Everything specific to a search (criteria, statuses, listings, photos,
 sources) lives in your own database; the code is generic. One deployment
-holds all your shortlists, each with its own tab and address
+holds all your finds, each with its own tab and address
 (`/sleeper-sofa`, `/ny-car`); the ⋯ tab adds, renames and archives them.
 
 What's in the repo besides the app:
@@ -13,7 +13,7 @@ What's in the repo besides the app:
 | Path | What |
 |---|---|
 | `lib/crawlers/` | Craigslist (any category) and Listings Project, crawled daily |
-| `lib/enrich/manufacturer.js` | For shortlists with a "Product page" metric: the maker's page, official image, new price |
+| `lib/enrich/manufacturer.js` | For finds with a "Product page" metric: the maker's page, official image, new price |
 | `clients/finds.mjs` | A no-dependency client for outside integrations (the Mac's Facebook Marketplace plugin) |
 | `scripts/send.mjs`, `scripts/seed.mjs` | Send an export of listings in; seed the furniture searches (`seed/furniture.mjs`) |
 | `routines/` | The Facebook Marketplace integration guide and the Claude-in-Chrome routine |
@@ -67,8 +67,8 @@ and admin credentials exist only as Vercel environment variables.
 
 ```sh
 npm install
-DATABASE_URL=postgres://user:pass@localhost/shortlist npm run dev   # local Postgres
-TEST_DATABASE_URL=postgres://user:pass@localhost/shortlist_test npm test
+DATABASE_URL=postgres://user:pass@localhost/finds npm run dev   # local Postgres
+TEST_DATABASE_URL=postgres://user:pass@localhost/finds_test npm test
 ```
 
 Tests drop tables, so they only use `TEST_DATABASE_URL` (localhost) and
