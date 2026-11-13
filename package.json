@@ -1,5 +1,5 @@
 {
-  "name": "shortlist",
+  "name": "finds",
   "private": true,
   "type": "module",
   "description": "Offline-first triage board for any big decision. Static UI + Vercel functions + Postgres.",

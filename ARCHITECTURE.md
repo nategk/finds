@@ -1,6 +1,6 @@
 # Architecture
 
-Shortlist is a triage board for any big decision: an apartment, a bike, a
+Finds is a triage board for any big decision: an apartment, a bike, a
 car. The code is generic. Everything specific to one search (what you want,
 the scoring rubric, the statuses, which numbers matter, the listings and
 their photos) lives in **your database**, not in this repo.
@@ -312,7 +312,7 @@ Criteria, features and the contact template are editable in the UI
 
 ## Built-in enrichers
 
-`lib/enrich/` registers the enrichers that ship with Shortlist. The
+`lib/enrich/` registers the enrichers that ship with Finds. The
 manufacturer step runs for shortlists whose card metrics include "Product
 page": Claude identifies the exact model from the post and photos, finds
 the maker's own page, and the listing gets the official image (last photo,

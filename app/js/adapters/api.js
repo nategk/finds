@@ -67,7 +67,7 @@ export function create(config) {
   };
 }
 
-// True when this site has a Shortlist API next to it.
+// True when this site has a Finds API next to it.
 export async function detect() {
   try {
     const ctrl = new AbortController();

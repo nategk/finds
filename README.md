@@ -1,4 +1,4 @@
-# Shortlist
+# Finds
 
 Track and score candidates for any big purchase decision — an apartment, a
 bike, a car, whatever's next — against your own criteria.
@@ -14,7 +14,7 @@ What's in the repo besides the app:
 |---|---|
 | `lib/crawlers/` | Craigslist (any category) and Listings Project, crawled daily |
 | `lib/enrich/manufacturer.js` | For shortlists with a "Product page" metric: the maker's page, official image, new price |
-| `clients/shortlist.mjs` | A no-dependency client for outside integrations (the Mac's Facebook Marketplace plugin) |
+| `clients/finds.mjs` | A no-dependency client for outside integrations (the Mac's Facebook Marketplace plugin) |
 | `scripts/send.mjs`, `scripts/seed.mjs` | Send an export of listings in; seed the furniture searches (`seed/furniture.mjs`) |
 | `routines/` | The Facebook Marketplace integration guide and the Claude-in-Chrome routine |
 
@@ -56,7 +56,7 @@ cached on the device and stored permanently in Vercel Blob.
 Open `https://YOUR-APP.vercel.app` on any device. The pill in the header
 shows which database is live.
 
-To edit the live data from a terminal: `SHORTLIST_URL=… node scripts/remote.mjs set <id> status=…` for one listing, or `pull snap.json`,
+To edit the live data from a terminal: `FINDS_URL=… node scripts/remote.mjs set <id> status=…` for one listing, or `pull snap.json`,
 edit, then `ADMIN_TOKEN=… node scripts/remote.mjs push snap.json` (keeps triage).
 
 **Access model:** the site and triage (status, notes, feature chips) are open to anyone

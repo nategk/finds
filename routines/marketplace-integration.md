@@ -1,13 +1,13 @@
-# Marketplace integration → Shortlist
+# Marketplace integration → Finds
 
 The Facebook Marketplace integration on the Mac searches in a signed-in
-browser. Everything it finds goes to the Shortlist board, which is the one
+browser. Everything it finds goes to the Finds board, which is the one
 place listings and triage live. Craigslist is searched by the board itself
 (daily, or Sources → Run crawl from your phone).
 
 ## Live: feed the board on every run
 
-Use `clients/shortlist.mjs` (no dependencies; copy it into the integration or
+Use `clients/finds.mjs` (no dependencies; copy it into the integration or
 import it from this repo). Each run:
 
 1. `board.plan()`: the board says what to search: every active item with
@@ -32,7 +32,7 @@ integration never writes it.
 
 ## Once: move an existing export
 
-    SHORTLIST_URL=https://finds-nate-3636s-projects.vercel.app ADMIN_TOKEN=… \
+    FINDS_URL=https://finds-nate-3636s-projects.vercel.app ADMIN_TOKEN=… \
       node scripts/send.mjs ~/Documents/Src/marketplace/searches/*/finds-import.json
 
 Listings that appear in more than one file go once; your status, notes and

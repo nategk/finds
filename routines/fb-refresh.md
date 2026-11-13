@@ -2,7 +2,7 @@
 
 Facebook Marketplace only opens signed in, so the server never crawls it.
 Instead, Claude in Chrome browses **your own signed-in Chrome** once a day
-(or when you say "refresh FB") and sends what it finds to Shortlist's
+(or when you say "refresh FB") and sends what it finds to Finds'
 `/api/intake`, which screens, scores, finds the maker's page and saves the
 listings like any crawled ones.
 
@@ -26,18 +26,18 @@ browsing. Your account is what's at risk, so:
 
 ## Setup
 
-- `SHORTLIST_URL`: the deployment, e.g. `https://finds-nate-3636s-projects.vercel.app`
+- `FINDS_URL`: the deployment, e.g. `https://finds-nate-3636s-projects.vercel.app`
 - `ADMIN_TOKEN`: the deployment's `ADMIN_TOKEN`. Keep it in the
   desktop app's environment or a local file the task reads. Never paste it
   into the prompt.
 
 ## The prompt
 
-> Refresh Facebook Marketplace for Shortlist. Follow
+> Refresh Facebook Marketplace for Finds. Follow
 > routines/fb-refresh.md in the shortlist repo exactly, including the
 > pace rules.
 >
-> 1. GET `$SHORTLIST_URL/api/snapshot`. For each search with state Active, find
+> 1. GET `$FINDS_URL/api/snapshot`. For each search with state Active, find
 >    its source named "Facebook Marketplace" and its saved search links.
 > 2. For each link: open it in a new tab in my Chrome, wait for results, and
 >    read the first screen or two of result cards. For each card collect
@@ -46,7 +46,7 @@ browsing. Your account is what's at risk, so:
 >    who ship: if the Shipping filter isn't applied on the page, pick
 >    "Shipping" under Delivery method yourself, and put the shipping price
 >    (if shown) in `location`.
-> 3. POST `$SHORTLIST_URL/api/intake` with `Authorization: Bearer
+> 3. POST `$FINDS_URL/api/intake` with `Authorization: Bearer
 >    $ADMIN_TOKEN` and `{ searchId, source: "Facebook Marketplace",
 >    step: "screen", candidates }` (all cards for that search, deduped by
 >    key). The reply's `keep` lists the keys worth opening.

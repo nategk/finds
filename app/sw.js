@@ -7,8 +7,8 @@
 //   signed URLs still hit the cache later.
 // - The page can post {type: "warm-photos", photos: [{id, url}]} to download
 //   every photo in the background.
-const SHELL = "shortlist-shell-v30";
-const PHOTOS = "shortlist-photos-v1";
+const SHELL = "finds-shell-v31";
+const PHOTOS = "shortlist-photos-v1"; // internal key, kept so cached photos survive the rename
 const SHELL_FILES = [
   "./", "index.html", "styles.css", "manifest.webmanifest",
   "js/main.js", "js/ui.js", "js/store.js", "js/model.js",
@@ -19,7 +19,7 @@ self.addEventListener("install", e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", e => e.waitUntil((async () => {
-  for (const k of await caches.keys()) if (k.startsWith("shortlist-shell-") && k !== SHELL) await caches.delete(k);
+  for (const k of await caches.keys()) if ((k.startsWith("shortlist-shell-") || k.startsWith("finds-shell-")) && k !== SHELL) await caches.delete(k);
   await self.clients.claim();
 })()));
 
