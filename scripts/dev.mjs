@@ -2,7 +2,7 @@
 // /api/* to the same function modules Vercel runs (Web Request/Response
 // handlers exported per HTTP method). No Vercel account needed.
 //
-//   DATABASE_URL=postgres://user:pass@localhost/shortlist npm run dev
+//   DATABASE_URL=postgres://user:pass@localhost/finds npm run dev
 //   Needs DATABASE_URL (a local Postgres is fine; the schema is created on first use).
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";

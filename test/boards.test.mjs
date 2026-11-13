@@ -1,5 +1,5 @@
-// The Shortlists menu's API (api/admin/boards): create, rename, archive,
-// delete shortlists and the items on them.
+// The Finds menu's API (api/admin/boards): create, rename, archive,
+// delete finds and the items on them.
 //   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
 import { skip, ADMIN } from "./env.mjs";
 import { test, before } from "node:test";
@@ -31,7 +31,7 @@ test("admin only", { skip }, async () => {
   assert.equal((await post({ action: "nope" })).status, 400);
 });
 
-test("create a shortlist with its first item; names must be unique", { skip }, async () => {
+test("create a find with its first item; names must be unique", { skip }, async () => {
   const r = await post({ action: "create", name: " Bikes ", item: "Gravel bike" });
   const body = await r.json();
   assert.equal(r.status, 200, JSON.stringify(body));
@@ -59,7 +59,7 @@ test("add an item: it copies the board's home, statuses and metrics; a lone sear
   assert.equal(after.searches.find(x => x.id === "car").collection, "NY Car");
 });
 
-test("rename, archive and unarchive a shortlist and an item", { skip }, async () => {
+test("rename, archive and unarchive a find and an item", { skip }, async () => {
   assert.equal((await post({ action: "rename", board: "c:NY Car", name: "Car" })).status, 200);
   assert.equal((await post({ action: "rename", board: "c:Car", name: "New York" })).status, 409, "no clash with another board");
   assert.equal((await post({ action: "archive", board: "c:Car" })).status, 200);
@@ -78,7 +78,7 @@ test("rename, archive and unarchive a shortlist and an item", { skip }, async ()
 test("delete needs the name typed; it takes items, listings and sources with it", { skip }, async () => {
   const no = await post({ action: "delete", board: "c:Car", confirm: "car" });
   assert.equal(no.status, 400);
-  assert.match((await no.json()).error, /Type the shortlist's name, "Car"/);
+  assert.match((await no.json()).error, /Type the find's name, "Car"/);
   assert.equal((await post({ action: "delete", board: "c:Car", confirm: "Car" })).status, 200);
   const s = await snap();
   assert.ok(!s.searches.some(x => x.collection === "Car"));

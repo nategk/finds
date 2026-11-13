@@ -12,11 +12,10 @@
   change so installed copies pick up the new version.
 
 ## Live data
-One app holds every shortlist (furniture, rugs, NY Car, the archived
+One app holds every find (furniture, rugs, NY Car, the archived
 apartment hunt): https://finds-nate-3636s-projects.vercel.app (the Vercel
-project "shortlist", deployed from this repo; the address predates its
-rename and keeps working). Photos live in Cloudflare R2 (Vercel Blob as fallback; see lib/photos.js); the old
-apartment project is paused as "shortlist-archived". Its data is in its database,
+project "finds", deployed from `nategk/finds`). Photos live in Cloudflare R2 (Vercel Blob as fallback; see lib/photos.js); the old
+apartment project is paused as "shortlist-archived", its original name. Its data is in its database,
 not this repo. Use `scripts/remote.mjs` or `scripts/send.mjs`
 (`FINDS_URL`, `ADMIN_TOKEN`) to triage, update or send listings.
 There is no Airtable mirror on it.

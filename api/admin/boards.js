@@ -1,5 +1,5 @@
 // POST /api/admin/boards  (Authorization: Bearer $ADMIN_TOKEN)
-// The Shortlists menu: add, rename, archive and delete shortlists and the
+// The Finds menu: add, rename, archive and delete finds and the
 // items on them (lib/boards.js lists the actions).
 import { manage } from "../../lib/boards.js";
 import { pushAfterWrite } from "../../lib/sync.js";

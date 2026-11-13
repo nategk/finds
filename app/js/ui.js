@@ -308,12 +308,12 @@ export function ago(ts) {
   return new Date(ts).toLocaleDateString();
 }
 
-// ---- Shortlists menu (the ⋯ tab) ----
+// ---- Finds menu (the ⋯ tab) ----
 
 const rowActions = (canEdit, acts) => !canEdit ? "" :
   `<span class="acts">${acts.map(([act, label]) => `<button class="btn small" type="button" data-act="${act}">${esc(label)}</button>`).join("")}</span>`;
 
-// Every shortlist (active, then archived) with rename / archive / delete,
+// Every find (active, then archived) with rename / archive / delete,
 // and adding a new one. Editing needs the admin token, saved on this device.
 export function listsSheet({ searches, current, counts, canEdit }) {
   const isOff = s => /^archived$/i.test(s.state || "");
@@ -324,7 +324,7 @@ export function listsSheet({ searches, current, counts, canEdit }) {
   const active = searches.filter(s => !isOff(s)), old = searches.filter(isOff);
   return `
     <section><ul class="rows lists">${active.map(row).join("") || `<li class="meta">None yet.</li>`}</ul>
-      ${canEdit ? `<form class="inline" data-form="create"><input name="name" placeholder="New shortlist, e.g. Gravel bike" aria-label="New shortlist" required><button class="btn primary" type="submit">Add</button></form>` : ""}</section>
+      ${canEdit ? `<form class="inline" data-form="create"><input name="name" placeholder="New find, e.g. Gravel bike" aria-label="New find" required><button class="btn primary" type="submit">Add</button></form>` : ""}</section>
     ${old.length ? `<details class="archived-lists"${old.includes(current) ? " open" : ""}><summary>Archived (${old.length})</summary><ul class="rows lists">${old.map(row).join("")}</ul></details>` : ""}
     <section class="unlock">${canEdit
       ? `<span class="hint">Editing is unlocked on this device.</span> <button class="btn small" type="button" data-act="lock">Lock</button>`

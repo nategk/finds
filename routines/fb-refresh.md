@@ -34,7 +34,7 @@ browsing. Your account is what's at risk, so:
 ## The prompt
 
 > Refresh Facebook Marketplace for Finds. Follow
-> routines/fb-refresh.md in the shortlist repo exactly, including the
+> routines/fb-refresh.md in the finds repo exactly, including the
 > pace rules.
 >
 > 1. GET `$FINDS_URL/api/snapshot`. For each search with state Active, find

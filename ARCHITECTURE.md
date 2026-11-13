@@ -86,13 +86,13 @@ Listing  id, searchIds[], title, price, score, status, notes, url, location,
 Source   id, searchIds[], name, access, links: [{label, url}], method, lastChecked, notes
 ```
 
-**Shortlists.** Every search is a shortlist with its own tab across the top
+**Finds.** Every search is a find with its own tab across the top
 (Sleeper sofa · Rugs · King bed frame · NY Car · ⋯) and its own address,
 `/<name>` (`/sleeper-sofa`), with the status tabs inside it. The ⋯ tab
-opens the Shortlists menu: jump to any one (archived ones included), add,
+opens the Finds menu: jump to any one (archived ones included), add,
 rename, archive, unarchive and delete (delete asks for the name). Editing
 there goes to `POST /api/admin/boards` with the admin token, entered once
-per device. An archived shortlist has no tab and isn't crawled; its
+per device. An archived find has no tab and isn't crawled; its
 listings stay. Renaming one renames its address. `vercel.json` rewrites
 every non-file path to the app; the service worker serves the cached app
 for any address offline. Searches that share a `collection` share one
@@ -206,7 +206,7 @@ shows the last sync, last error and webhook expiry.
 **Setup (env vars):** `AIRTABLE_TOKEN` (a personal access token with
 `data.records:read`, `data.records:write`, `schema.bases:read` and
 `webhook:manage`, limited to the base), `AIRTABLE_BASE_ID`, `CRON_SECRET`
-(16+ chars; Vercel sends it with cron calls) and `SHORTLIST_URL` (the
+(16+ chars; Vercel sends it with cron calls) and `FINDS_URL` (the
 public URL Airtable should call; defaults to the production domain).
 
 ## Device sync
@@ -313,7 +313,7 @@ Criteria, features and the contact template are editable in the UI
 ## Built-in enrichers
 
 `lib/enrich/` registers the enrichers that ship with Finds. The
-manufacturer step runs for shortlists whose card metrics include "Product
+manufacturer step runs for finds whose card metrics include "Product
 page": Claude identifies the exact model from the post and photos, finds
 the maker's own page, and the listing gets the official image (last photo,
 labeled Official), the model, the new price and % of new. Anything short of
@@ -344,7 +344,7 @@ through the open `PATCH /api/listings/:id`.
 `node scripts/remote.mjs pull snap.json` saves the live snapshot (public);
 edit it, then `node scripts/remote.mjs push snap.json` upserts it through
 `/api/admin/import?keepTriage=1`, so status, notes and features set in the
-app survive. Needs `SHORTLIST_URL` and, for push, `ADMIN_TOKEN`.
+app survive. Needs `FINDS_URL` and, for push, `ADMIN_TOKEN`.
 
 ## Adding a new search
 
