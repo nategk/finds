@@ -1,10 +1,12 @@
+// DELETE /api/listings/:id (Authorization: Bearer $ADMIN_TOKEN) -> permanently removes the listing.
+//   (Kept in this file: the Hobby plan caps a deployment at 12 functions.)
 // PATCH /api/listings/:id  { status?, notes?, features?, rank? } -> triage write.
 // rank: 1..999 or null (unranked); the app renumbers the others itself.
 // Open to anyone with the link (by choice: nothing here is private), so it
 // only accepts these fields, bounded in size.
 import * as postgres from "../../lib/postgres.js";
 import { pushAfterWrite } from "../../lib/sync.js";
-import { json, fail } from "../../lib/http.js";
+import { json, fail, requireAdmin } from "../../lib/http.js";
 
 export async function PATCH(request) {
   try {
@@ -21,6 +23,18 @@ export async function PATCH(request) {
     if (!found) return json({ error: "No listing with id " + id }, 404);
     await pushAfterWrite({ listings: [id] });
     return json({ ok: true, id, ...patch });
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    requireAdmin(request);
+    const id = decodeURIComponent(new URL(request.url).pathname.split("/").pop());
+    const deleted = await postgres.deleteListings([id]);
+    if (!deleted) return json({ error: "No listing with id " + id }, 404);
+    return json({ ok: true, id });
   } catch (e) {
     return fail(e);
   }

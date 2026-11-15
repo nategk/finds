@@ -28,9 +28,6 @@
     "api/admin/rescore.js": {
       "maxDuration": 300
     },
-    "api/admin/delete.js": {
-      "maxDuration": 60
-    },
     "api/admin/boards.js": {
       "maxDuration": 60
     },

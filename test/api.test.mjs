@@ -17,7 +17,6 @@ before(async () => {
     snapshot: await import("../api/snapshot.js"),
     listing: await import("../api/listings/[id].js"),
     importer: await import("../api/admin/import.js"),
-    remove: await import("../api/admin/delete.js"),
   };
 });
 
@@ -99,13 +98,12 @@ test("re-import with keepTriage preserves edits", { skip }, async () => {
   assert.equal(snap.listings.find(x => x.id === "listing-5").status, "Contacted");
 });
 
-test("admin delete removes listings, and needs the token", { skip }, async () => {
+test("DELETE removes a listing, and needs the admin token", { skip }, async () => {
   const id = (await (await api.snapshot.GET(req("/api/snapshot"))).json()).listings.at(-1).id;
-  const call = (init, body) => api.remove.POST(req("/api/admin/delete", { method: "POST", body: JSON.stringify(body), ...init }));
-  assert.equal((await call({}, { ids: [id] })).status, 401);
-  assert.equal((await call({ headers: { authorization: "Bearer " + ADMIN } }, { ids: [] })).status, 400);
-  const r = await call({ headers: { authorization: "Bearer " + ADMIN } }, { ids: [id, "nope"] });
-  assert.deepEqual(await r.json(), { ok: true, deleted: 1, missing: 1 });
+  const call = (path, headers) => api.listing.DELETE(req("/api/listings/" + path, { method: "DELETE", headers }));
+  assert.equal((await call(id, {})).status, 401);
+  assert.equal((await call("nope", { authorization: "Bearer " + ADMIN })).status, 404);
+  assert.equal((await call(id, { authorization: "Bearer " + ADMIN })).status, 200);
   const snap = await (await api.snapshot.GET(req("/api/snapshot"))).json();
   assert.ok(!snap.listings.some(l => l.id === id));
 });
