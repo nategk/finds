@@ -20,6 +20,16 @@ not this repo. Use `scripts/remote.mjs` or `scripts/send.mjs`
 (`FINDS_URL`, `ADMIN_TOKEN`) to triage, update or send listings.
 There is no Airtable mirror on it.
 
+## Crawling ("update" the lists)
+"Update" means: crawl every source (Facebook Marketplace too, when Claude
+desktop/Chrome is available), add new matches, drop expired and wrong ones,
+rank. Never touch archived searches. Be token-efficient: print compact
+lists, not full snapshots. Before or after a crawl, read the notes on
+Passed and Shortlisted listings (skip generated seed notes: VINs, "ask
+about…", "Pruned:") to learn what the user likes and dislikes. Propose
+criteria updates and **confirm them with the user before editing a
+search's criteria**.
+
 ## Facebook Marketplace
 Never crawled from the server. The Mac's Marketplace plugin and the
 Claude-in-Chrome routine send listings in through `/api/intake`
