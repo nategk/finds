@@ -1,6 +1,6 @@
 // Neon <-> Airtable sync (lib/sync.js) against a real Postgres and an
 // in-memory Airtable (test/fake-airtable.mjs).
-//   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
+//   TEST_DATABASE_URL=postgres://finds:dev@localhost/finds_test npm test
 import { skip, ADMIN, fixture } from "./env.mjs";
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
@@ -33,7 +33,7 @@ before(async () => {
   globalThis.fetch = (url, init) => String(url).startsWith("https://api.airtable.com/") ? at.fetch(url, init) : realFetch(url, init);
   process.env.AIRTABLE_TOKEN = "patTEST";
   process.env.AIRTABLE_BASE_ID = BASE;
-  process.env.SHORTLIST_URL = "https://shortlist.example";
+  process.env.FINDS_URL = "https://finds.example";
   sync = await import("../lib/sync.js");
 });
 after(() => { if (realFetch) globalThis.fetch = realFetch; });
@@ -50,7 +50,7 @@ test("first sync mirrors Neon into Airtable and registers the webhook", { skip }
   const body = await syncNow();
   assert.equal(body.webhook.created, true);
   assert.equal(at.hooks.size, 1);
-  assert.equal([...at.hooks.values()][0].notificationUrl, "https://shortlist.example/api/airtable/webhook");
+  assert.equal([...at.hooks.values()][0].notificationUrl, "https://finds.example/api/airtable/webhook");
   const snap = await pg.snapshot();
   assert.equal(at.records("Searches").length, snap.searches.length);
   assert.equal(at.records("Sources").length, snap.sources.length);

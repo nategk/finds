@@ -1,7 +1,7 @@
 // Layer extension points (lib/layer.js), intake (api/intake), the
 // availability re-check and the daily-crawl cron gate, against a real
 // Postgres with no ANTHROPIC_API_KEY (unscored path).
-//   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
+//   TEST_DATABASE_URL=postgres://finds:dev@localhost/finds_test npm test
 import { skip, ADMIN } from "./env.mjs";
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
