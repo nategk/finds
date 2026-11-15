@@ -275,6 +275,10 @@ one) into this deployment's own store, ten listings per call: while the
 reply says `more`, call again with its `after`. Each photo keeps its old
 URL as `original`. Run it before deleting the old store.
 
+**Deleting listings.** `POST /api/admin/delete {ids: [...]}` (admin token, up to
+500) permanently removes listings. Triage (`PATCH /api/listings/:id`) stays
+non-destructive; use this for junk a crawl let in.
+
 **Re-scoring.** `POST /api/admin/rescore {searchId, all?}` (admin token)
 scores a search's listings again in place, with the same scoring and
 enrichers as a crawl: unscored ones (saved before there was an API key) by
