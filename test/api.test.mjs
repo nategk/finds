@@ -1,5 +1,5 @@
 // Integration test: the real /api handlers against a real Postgres.
-//   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
+//   TEST_DATABASE_URL=postgres://finds:dev@localhost/finds_test npm test
 // Skips when TEST_DATABASE_URL isn't set.
 import { skip, ADMIN, fixture } from "./env.mjs";
 import { test, before } from "node:test";

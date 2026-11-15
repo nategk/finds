@@ -1,6 +1,6 @@
 // The Finds menu's API (api/admin/boards): create, rename, archive,
 // delete finds and the items on them.
-//   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
+//   TEST_DATABASE_URL=postgres://finds:dev@localhost/finds_test npm test
 import { skip, ADMIN } from "./env.mjs";
 import { test, before } from "node:test";
 import assert from "node:assert/strict";

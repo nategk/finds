@@ -1,6 +1,6 @@
 // Search edits + a full crawl against a real Postgres, with the listing sites
 // mocked (global fetch) and no ANTHROPIC_API_KEY (unscored path).
-//   TEST_DATABASE_URL=postgres://shortlist:dev@localhost/shortlist_test npm test
+//   TEST_DATABASE_URL=postgres://finds:dev@localhost/finds_test npm test
 import { skip, fixture } from "./env.mjs";
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
