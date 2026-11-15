@@ -215,6 +215,17 @@ function rankMenu(l, group, rankCount) {
   return `<label class="rank${ranked ? " on" : ""}" title="${ranked ? "Your rank: change or unrank" : "Rank it"}"><select data-rank aria-label="Your rank">${opts}</select></label>`;
 }
 
+// Before a listing is shortlisted (still "to review"): two clear buttons.
+// Pass uses the search's "Passed" status (else its first archived one).
+function decide(statuses, group) {
+  if (group !== "review") return "";
+  const keep = (statuses.find(s => s.group === "shortlist") || {}).label;
+  const arch = statuses.filter(s => s.group === "archived");
+  const pass = (arch.find(s => /^passed$/i.test(s.label)) || arch[0] || {}).label;
+  if (!keep || !pass) return "";
+  return `<div class="decide"><button class="btn" type="button" data-decide="${esc(pass)}">Pass</button><button class="btn primary" type="button" data-decide="${esc(keep)}">Shortlist</button></div>`;
+}
+
 export function card(search, l, pendingIds, expanded = new Set(), rankCount = 0) {
   const statuses = statusesFor(search);
   const group = groupOf(search, l.status);
@@ -274,6 +285,7 @@ export function card(search, l, pendingIds, expanded = new Set(), rankCount = 0)
       ${open && l.description ? `<p class="desc">${esc(l.description)}</p>` : ""}
     </div>
     <div class="foot">
+      ${decide(statuses, group)}
       <div class="reach">
         ${contact(l)}
         <textarea id="nt-${esc(l.id)}" data-notes rows="3" aria-label="Your notes" placeholder="Your notes: called broker, viewing Tue 6pm…">${esc(l.notes)}</textarea>

@@ -344,6 +344,10 @@ addEventListener("resize", () => { if ($("#lightbox").open) lightboxPos(); });
 document.addEventListener("keydown", e => {
   if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-expand]")) { e.preventDefault(); e.target.click(); }
 });
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("button[data-decide]");
+  if (b) store.update(b.closest(".card").dataset.id, { status: b.dataset.decide });
+});
 document.addEventListener("change", e => {
   if (e.target.matches("select[data-status]")) {
     const id = e.target.closest(".card").dataset.id, status = e.target.value;
