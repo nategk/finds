@@ -98,12 +98,18 @@ function away(search, l) {
   return row("away", ICON.home, text, `Straight line from ${search.home} to the listing (${d.fidelity})`);
 }
 
-// Links that hold for anything: the listing on its site, any metric that's a
+// The way to the listing or product page, a place to buy. Every item should
+// have one; without it, say so rather than leave a gap.
+function buy(l) {
+  if (!l.url) return `<span class="buy none" title="Add the listing or product page URL so this can be bought">No link to buy yet</span>`;
+  return `<a class="btn primary buy" href="${esc(l.url)}" target="_blank" rel="noopener">${l.source ? "View on " + esc(l.source) : "View listing"} ${ICON.open}</a>`;
+}
+
+// Links that hold for anything: any metric that's a
 // link (e.g. the maker's product page), directions from home, and when it
 // was found.
 function links(search, l) {
   const out = [];
-  if (l.url) out.push(`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.source || "Listing")} ↗</a>`);
   for (const m of (search && search.metrics) || []) {
     const v = (l.fields || {})[m.field];
     if (isUrl(v)) out.push(`<a href="${esc(v)}" target="_blank" rel="noopener">${esc(m.label)} ↗</a>`);
@@ -285,6 +291,7 @@ export function card(search, l, pendingIds, expanded = new Set(), rankCount = 0)
       ${open && l.description ? `<p class="desc">${esc(l.description)}</p>` : ""}
     </div>
     <div class="foot">
+      ${buy(l)}
       ${decide(statuses, group)}
       <div class="reach">
         ${contact(l)}
