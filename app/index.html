@@ -23,9 +23,6 @@
       <button class="source-pill" id="source-pill" type="button" aria-label="Data source settings">
         <i class="dot" id="source-dot"></i><span id="source-name">Loading…</span><span class="kind" id="source-kind"></span>
       </button>
-      <button class="db-btn" type="button" id="open-criteria" data-sheet="criteria" hidden>Criteria</button>
-      <button class="db-btn" type="button" id="open-contact" data-sheet="contact" hidden>Contact</button>
-      <button class="db-btn" type="button" id="open-sources" data-sheet="sources" hidden>Sources</button>
     </div>
   </div>
 
@@ -36,6 +33,11 @@
 
   <nav class="items" id="items" aria-label="Items" hidden></nav>
   <nav class="tabs" id="tabs" aria-label="Filter listings"></nav>
+  <div class="setup db-group" id="setup" role="group" aria-label="This find's setup">
+    <button class="db-btn" type="button" id="open-criteria" data-sheet="criteria" hidden>Criteria</button>
+    <button class="db-btn" type="button" id="open-contact" data-sheet="contact" hidden>Contact</button>
+    <button class="db-btn" type="button" id="open-sources" data-sheet="sources" hidden>Sources</button>
+  </div>
   <main class="grid" id="grid"></main>
 
 </div>
