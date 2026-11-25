@@ -17,6 +17,7 @@ before(async () => {
     snapshot: await import("../api/snapshot.js"),
     listing: await import("../api/listings/[id].js"),
     importer: await import("../api/admin/import.js"),
+    search: await import("../api/searches/[id].js"),
   };
 });
 
@@ -56,6 +57,20 @@ test("snapshot returns the model shape", { skip }, async () => {
   assert.equal(top.fields["Greenway (mi)"], 0.29);
   assert.deepEqual(top.searchIds, [snap.searches[0].id]);
   assert.ok(snap.sources.some(s => s.links.length));
+});
+
+test("search PATCH sets the tab's locale, trimmed and capped; snapshot returns it", { skip }, async () => {
+  const id = (await (await api.snapshot.GET(req("/api/snapshot"))).json()).searches[0].id;
+  const patch = locale => api.search.PATCH(req("/api/searches/" + id, { method: "PATCH", body: JSON.stringify({ locale }) }));
+  assert.equal((await patch("  Venice \n")).status, 200);
+  let s = (await (await api.snapshot.GET(req("/api/snapshot"))).json()).searches.find(x => x.id === id);
+  assert.equal(s.locale, "Venice");
+  await patch("x".repeat(80));
+  s = (await (await api.snapshot.GET(req("/api/snapshot"))).json()).searches.find(x => x.id === id);
+  assert.equal(s.locale.length, 40);
+  await patch("");
+  s = (await (await api.snapshot.GET(req("/api/snapshot"))).json()).searches.find(x => x.id === id);
+  assert.equal(s.locale, "");
 });
 
 test("PATCH writes status and notes, and only those", { skip }, async () => {

@@ -319,10 +319,13 @@ dialog.lightbox::backdrop { background: #000; }
 .items { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; margin-bottom: -8px; border-bottom: 1px solid var(--gray-alpha-400); }
 .items[hidden] { display: none; }
 .items::-webkit-scrollbar { display: none; }
-.item { flex: none; display: inline-flex; align-items: baseline; gap: 6px; padding: 0 0 10px; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; color: var(--gray-900); font: 500 16px/24px var(--font); letter-spacing: -.32px; white-space: nowrap; cursor: pointer; transition: color .15s, border-color .15s; }
+.item { flex: none; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 0; padding: 0 0 10px; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; color: var(--gray-900); font: 500 16px/24px var(--font); letter-spacing: -.32px; white-space: nowrap; cursor: pointer; transition: color .15s, border-color .15s; }
 .item:hover { color: var(--gray-1000); }
 .item[aria-pressed="true"] { color: var(--gray-1000); border-bottom-color: var(--gray-1000); }
 .item .n { font: 400 13px/20px var(--mono); color: var(--gray-900); }
+.item-name { display: inline-flex; align-items: baseline; gap: 6px; }
+.item .loc { font: 500 11px/14px var(--mono); letter-spacing: .4px; text-transform: uppercase; color: var(--gray-900); }
+.item[aria-pressed="true"] .loc { color: var(--gray-1000); }
 
 /* Distance from home, and the links row */
 .away .u { font-weight: 400; margin-left: 1px; }
