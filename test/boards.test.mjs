@@ -17,7 +17,7 @@ before(async () => {
   api = { boards: await import("../api/admin/boards.js"), importer: await import("../api/admin/import.js"), snapshot: await import("../api/snapshot.js") };
   const seed = {
     searches: [
-      { id: "bed", name: "Bed frame", collection: "New York", home: "200 W 67th St", statuses: [{ label: "New", group: "review" }, { label: "Sold", group: "archived" }], metrics: [{ field: "Model", label: "Model", unit: "" }] },
+      { id: "bed", name: "Bed frame", collection: "New York", home: "200 W 67th St", locale: "NYC", statuses: [{ label: "New", group: "review" }, { label: "Sold", group: "archived" }], metrics: [{ field: "Model", label: "Model", unit: "" }] },
       { id: "car", name: "NY Car" },
     ],
     listings: [{ id: "l1", searchIds: ["car"], title: "Volvo", status: "New" }],
@@ -44,12 +44,13 @@ test("create a find with its first item; names must be unique", { skip }, async 
   assert.equal((await post({ action: "create", name: "Bikes" })).status, 409);
 });
 
-test("add an item: it copies the board's home, statuses and metrics; a lone search becomes a named board", { skip }, async () => {
+test("add an item: it copies the board's home, locale, statuses and metrics; a lone search becomes a named board", { skip }, async () => {
   let body = await (await post({ action: "add-item", board: "c:New York", name: "Rug" })).json();
   const s = await snap();
   const rug = s.searches.find(x => x.id === body.searchId);
   assert.equal(rug.collection, "New York");
   assert.equal(rug.home, "200 W 67th St");
+  assert.equal(rug.locale, "NYC");
   assert.deepEqual(rug.statuses.map(x => x.label), ["New", "Sold"]);
   assert.equal(rug.metrics[0].field, "Model");
 

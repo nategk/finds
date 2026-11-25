@@ -79,11 +79,16 @@ export function tabs(search, listings, current) {
     + (counts.archived > 0 || current === "archived" ? `<span class="tab-sep" aria-hidden="true"></span>${button(archived)}` : "");
 }
 
-// Item tabs: one per search on the board (desk chair, bed frame…), each
-// with how many open listings it has. Status tabs sit underneath.
+// Item tabs: one per search (desk chair, bed frame…), named for the thing
+// being searched for, with how many open listings it has and, underneath,
+// its locale ("NYC", "Venice") when it has one. Status tabs sit below.
 export function items(searches, current, openCount) {
-  return searches.map(s =>
-    `<button class="item" type="button" data-search="${esc(s.id)}" aria-pressed="${s.id === current.id}">${esc(s.name)}<span class="n">${openCount(s)}</span></button>`).join("");
+  return searches.map(s => {
+    const loc = String(s.locale || "").trim();
+    return `<button class="item" type="button" data-search="${esc(s.id)}" aria-pressed="${s.id === current.id}"${loc ? ` aria-label="${esc(s.name + ", " + loc)}"` : ""}>`
+      + `<span class="item-name">${esc(s.name)}<span class="n">${openCount(s)}</span></span>`
+      + (loc ? `<span class="loc">${esc(loc)}</span>` : "") + `</button>`;
+  }).join("");
 }
 
 const isUrl = v => /^https?:\/\/\S+$/.test(String(v || ""));

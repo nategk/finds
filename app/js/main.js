@@ -189,6 +189,7 @@ function render() {
   // Criteria, contact template and sources live in the sheet, opened from the database group.
   if (search) {
     fillDoc("#home", search.home);
+    fillDoc("#locale", search.locale);
     $("#home-hint").textContent = !search.home ? "Set it to see how far each listing is, with directions."
       : search.homeGeo ? `Found: ${search.homeGeo.label} (${search.homeGeo.fidelity})` : "Locating…";
     // Finds in the same collection share one home location.
@@ -379,7 +380,7 @@ $("#copy-contact").addEventListener("click", async () => {
 // Criteria (with its bonus features) and the contact template: edit, then
 // Save (saved on this device at once, uploaded in the background like triage).
 for (const [sels, btn, hint, label, patchOf] of [
-  [["#home", "#criteria", "#features"], "#save-criteria", "#criteria-hint", "Criteria", () => ({ home: $("#home").value.replace(/\s+/g, " ").trim(), criteria: $("#criteria").value, features: parseFeatures($("#features").value) })],
+  [["#home", "#locale", "#criteria", "#features"], "#save-criteria", "#criteria-hint", "Criteria", () => ({ home: $("#home").value.replace(/\s+/g, " ").trim(), locale: $("#locale").value.replace(/\s+/g, " ").trim(), criteria: $("#criteria").value, features: parseFeatures($("#features").value) })],
   [["#contact"], "#save-contact", "#contact-hint", "Template", () => ({ contactTemplate: $("#contact").value })],
 ]) {
   for (const sel of sels) $(sel).addEventListener("input", () => { $(sel).dataset.dirty = "1"; $(btn).disabled = false; $(hint).textContent = "Unsaved changes"; });

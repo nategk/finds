@@ -4,8 +4,9 @@
 // Search   { id, name, lookingFor, budget, area, timing, state, criteria,
 //            contactTemplate, statuses: [{label, group}], metrics: [Metric],
 //            features: [Feature], home, homeGeo: {lat, lon, label, fidelity},
-//            collection }  searches sharing a collection are one board (a tab
-//            each) and share the home / delivery location
+//            collection, locale }  searches sharing a collection are one
+//            board (a tab each) and share the home / delivery location;
+//            locale is a short place label shown under the tab ("NYC")
 // Listing  { id, searchIds: [id], title, price, score, status, notes, url,
 //            location, description, summary, source, createdAt,
 //            photos: [{id, url, label?}], fields: {raw field name: value},

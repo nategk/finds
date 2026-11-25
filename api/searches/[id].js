@@ -1,4 +1,4 @@
-// PATCH /api/searches/:id  { criteria?, contactTemplate?, lookingFor?, budget?, area?, timing?,
+// PATCH /api/searches/:id  { criteria?, contactTemplate?, lookingFor?, budget?, area?, timing?, locale?,
 //                            features?: [{label, points}], home? }
 // Edits a search's text fields from the UI. Open like triage.
 // `home` (the home / delivery location) is geocoded here and set on every
@@ -8,7 +8,7 @@ import { locate } from "../../lib/geo.js";
 import { pushAfterWrite } from "../../lib/sync.js";
 import { json, fail } from "../../lib/http.js";
 
-const FIELDS = ["criteria", "contactTemplate", "lookingFor", "budget", "area", "timing"];
+const FIELDS = ["criteria", "contactTemplate", "lookingFor", "budget", "area", "timing", "locale"];
 
 export async function PATCH(request) {
   try {
@@ -16,7 +16,8 @@ export async function PATCH(request) {
     let body;
     try { body = await request.json(); } catch (e) { return json({ error: "Body must be JSON." }, 400); }
     const patch = {};
-    for (const f of FIELDS) if (typeof body[f] === "string") patch[f] = body[f].slice(0, f === "criteria" || f === "contactTemplate" ? 50000 : 500);
+    for (const f of FIELDS) if (typeof body[f] === "string") patch[f] = f === "locale" ? body[f].replace(/\s+/g, " ").trim().slice(0, 40)
+      : body[f].slice(0, f === "criteria" || f === "contactTemplate" ? 50000 : 500);
     if (Array.isArray(body.features)) {
       patch.features = body.features
         .filter(f => f && typeof f.label === "string" && f.label.trim())
